@@ -1,14 +1,12 @@
 # Ev1_SelectionMetaAnalysis
 
-The following vignette will take you through the basics of genetic selection analysis. 
+There are lots of interesting patterns that you can extract from genetic marker data. This can include patterns of linkage, balancing selection, or even inbreeding signals. One of the most common ones is to try find sites on the genome that are under divergent selection. The following vignette will take you through the basics of genetic selection analysis. 
 
 The project has been funded by the <a href="https://ausevo.com/ECR_grants_2022/">AES ERC Networking Grant Scheme</a>.
 
-<h2><i>Genetic Outlier and Association Analysis</i></h2>
+<h2>A <i>fairly</i> brief introduction to Genetic Outlier and Association Analysis</h2>
 
-There are lots of interesting patterns that you can extract from geneti marker data. This can include patterns of linkage, ballancing selection, and another example. One of the most common ones is to try find sites on the genome that are under divergent selection.
-
-When we look through a genome to try find loci that are under divergent selection, we often conduct what is called outlier or association analyses. **Outlier analysis** requires just knowledge of the genetics of your samples (along with the usual sample metadata, for example population grouping), and tries to find loci that behave very differently from the rest of the genome (with the assumption being that the rest of the genome represents patterns of neutral genetic diveristy)<sup>A</sup>. Meanwhile **association analysis** require some sort of covariate data, and tests whether there are any genetic variants statistically associated with this new data (you may have heard the term [GWAS](https://www.genome.gov/genetics-glossary/Genome-Wide-Association-Studies). This data can come in the form of phenotype data (e.g. morphology, disease status, physiology measures), or could be spatial (e.g. environmental, spatial). Association tests will look for sites in the genome where the precense or absence of a variant is highly correlated with the values in the co-variate data, usually through some regression type analysis.
+When we look through a genome to try find loci that are under divergent selection, we often conduct what is called outlier or association analyses. **Outlier analysis** requires just knowledge of the genetics of your samples (plus sample metadata, for example population groupings), and tries to find loci that behave very differently from the underlying patterns across the genome (with the assumption being that the rest of the genome represents patterns of neutral genetic diveristy)<sup>A</sup>. Meanwhile **association analysis** require some sort of covariate data, and tests whether there are any genetic variants statistically associated with this new data (you may have heard the term [GWAS](https://www.genome.gov/genetics-glossary/Genome-Wide-Association-Studies)). This data can come in the form of phenotype data (e.g. morphology, disease status, physiology measures), or could be spatial (e.g. environmental, climate). Association tests look for sites in the genome where the precense or absence of a variant is highly correlated with the values in the co-variate data, usually through some regression type analysis.
 
 <sup>A</sup> it is very important then to account for any population substructure.
 
@@ -50,7 +48,9 @@ https://onlinelibrary.wiley.com/doi/10.1111/mec.14549
 
 ## What data are we starting with
 
-Metadata file, including individual and population names, as well as some environmental metadata.
+Metadata file, including individual and population names
+
+covariates inc. environmental metadata.
 
 The a genetic file. We will start with a VCF file.
 
