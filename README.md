@@ -36,8 +36,9 @@ We'll cover the pre-processing of program specific input files, how to run the p
 
 > **An important note about reduced representation verses whole genome sequencing**
 >
-> Completing outlier analysis 
+> Completing outlier analysis is possible and often done on reduced representation data. It is important to remember how your genome coverage (the number of genome variant sites / the genome length <sup>C</sup>) will affect your results and interpretation. Often with WGS data, you will see well resolved 'peaks' with a fairly smooth curve of points leading up to it either side. From this we often infer that the highest point is the genetic variant of interest, and the other sites either side of that exhibit signals of selection because they reside close to, and thus are linked, to the variant of interest. However, consider that even in WGS data, unless we have every single genetic variant represented (which may not be the case, depending on our variant calling and filtering parameters) it is possible that the genetic variant of interest that we have identified is not the main one, but is simply another neighbouring linked SNP to one that is not represented in the data. This problem becomes even more relevant with reduced representation sequencing (RRS), for which the genome coverage may be extremely patchy<sup>C</sup>. Thus with all outlier analysis, but especially so for those using RRS data, remember that your flagged outliers are not exhaustive, and may themselves only be liked to the variant that is truely under selection.
 
+<sup>C</sup> You may also want to consider linkage blocks.
 
 
 https://onlinelibrary.wiley.com/doi/10.1111/mec.14549
@@ -47,22 +48,18 @@ https://onlinelibrary.wiley.com/doi/10.1111/mec.14549
 ![ScreenShot](https://els-jbs-prod-cdn.jbs.elsevierhealth.com/cms/asset/4be56b5b-8593-4116-ab9a-ec7b9e3c9a05/gr1.jpg)
 
 
-## Where to find data
+## What data are we starting with
 
-Great - you're working on a new species and need to make a plot of where it is located for some figure or presentation. It's actually a very quick proccess. First step is to find a data base where you can pull information about the distribution of your species. There are many options here, some will be quite taxa or country specific. Some good starting points are:
+Metadata file, including individual and population names, as well as some environmental metadata.
 
-<ul>
-<li><a href="https://ebird.org/home">eBird</a></li>
-<li><a href="GBIF">https://www.gbif.org/</a></li>
-<li><a href="https://www.inaturalist.org/">iNaturalist</a></li>
-<li><a href="https://mol.org/">Map of Life</a></li>
-</ul>
+The a genetic file. We will start with a VCF file.
 
-Find you species and retrieve you data.
 
-## Plotting in R
+## PCAdapt
 
-Packages used in the below code.
+The first outlier program that we will deal with is PCAdapt. The reason I start here is simple: PCAdapt doesn't rely on any metadata. We simply require a data set of SNPs and using an ordination approach (principle component analysis) we identify outlier genetic sites. 
+
+PCAdapt is an R package, therefore we will do all the following analysis in R. R is generally slower than unix command line programs as
 
 <pre class="r"><code>library(dplyr)
 library(maps)
