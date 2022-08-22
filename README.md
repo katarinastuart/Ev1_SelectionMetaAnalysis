@@ -79,3 +79,7 @@ You distirbution data will look different depending on where you have pulled it 
 
 Thank you to the <a href="https://ausevo.com/ECR_grants_2022/">AES ERC Networking Grant Scheme</a> for funding this project.
 
+## Project Contributors
+
+https://www.dataschool.io/how-to-contribute-on-github/
+
