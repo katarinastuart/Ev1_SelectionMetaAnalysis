@@ -6,3 +6,5 @@ People who have the correct type of data can optionally provide some data toward
 
 Why is compliling this information across species useful?
 list!
+
+No requirements for what type of outliers required. We are just interest in sites under recent change. This could be env. assoc change, pehno assoc change, or identified through plain outlier 9non assoc) means. These sites are likely under rapid adaptation. thus are interesting.
