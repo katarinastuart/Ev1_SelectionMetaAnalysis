@@ -54,6 +54,8 @@ covariates inc. environmental metadata.
 
 The a genetic file. We will start with a VCF file.
 
+Working with your own data
+
 
 ## PCAdapt
 
