@@ -47,6 +47,7 @@ https://pubmed.ncbi.nlm.nih.gov/29486732/
 
 ![ScreenShot](https://els-jbs-prod-cdn.jbs.elsevierhealth.com/cms/asset/4be56b5b-8593-4116-ab9a-ec7b9e3c9a05/gr1.jpg)
 
+also include  an hour of group discussion on one of the days about research question framing + grant integration
 
 
 
