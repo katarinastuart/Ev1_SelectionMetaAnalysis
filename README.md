@@ -10,7 +10,7 @@ When we look through a genome to try find loci that are under divergent selectio
 
 <sup>A</sup> it is very important then to account for any population substructure.
 
-> **An important note about additive genetic variance**
+> :information_source: **An important note about additive genetic variance**
 >
 > It is important to bear in mind how the input genetic data for outlier or association models is being interreted by the model. When dealing with many of these models (and input genotype files) the assumption is that the SNP effects are [additive](https://link.springer.com/referenceworkentry/10.1007/978-3-319-47829-6_5-1). This can be seen from, for example, the way we encode homozygous reference allele, heterozygous, and homozygous alternate allele as "0", "1", and "2" respectively in a BayPass input genofile. For the diploid organism (with two variant copies for each allele) one copy of a variant (i.e. heterozygous) is assumed to have half the effect of having two copies. However, what if the locus in question has dominance effects? This would mean the heterozygous form behaves the same as the homozygous dominant form, and it would be more appropriate to label these instead as "0", "0", "1". But with thousands, if not millions of (most likely) completely unknown variants in a dataset, how can we possibly know? The answer is we cannot. And most models will assume additive effects, because this the simplest assumption. However, by not factoring in dominance effects we could possible be missing many important functional variants, as Reynolds et al. [2021](https://www.nature.com/articles/s41588-021-00872-5) demonstrates. Genomics is full of caveats and pitfalls, which while providing new directions to explore can be a bit overwhelming. Remember, you selection analysis doesn't have to be exhaustive, just make sure it is as fit for purpose within your study design. There is so much going on in just one genome, there is no way you can analyse everything in one go. 
 
@@ -32,7 +32,7 @@ Next we will conduct some more advanced outlier analysis:
 
 We'll cover the pre-processing of program specific input files, how to run the programs, how to visualise the output and also in some cases we'll need to take extra steps to map the genetic markers of interest back to the SNP data.  
 
-> **An important note about reduced representation verses whole genome sequencing**
+> :information_source: **An important note about reduced representation verses whole genome sequencing**
 >
 > Completing outlier analysis is possible and often done on reduced representation data. It is important to remember how your genome coverage (the number of genome variant sites / the genome length <sup>C</sup>) will affect your results and interpretation. Often with WGS data, you will see well resolved 'peaks' with a fairly smooth curve of points leading up to it either side. From this we often infer that the highest point is the genetic variant of interest, and the other sites either side of that exhibit signals of selection because they reside close to, and thus are linked, to the variant of interest. However, consider that even in WGS data, unless we have every single genetic variant represented (which may not be the case, depending on our variant calling and filtering parameters) it is possible that the genetic variant of interest that we have identified is not the main one, but is simply another neighbouring linked SNP to one that is not represented in the data. This problem becomes even more relevant with reduced representation sequencing (RRS), for which the genome coverage may be extremely patchy<sup>C</sup>. Thus with all outlier analysis, but especially so for those using RRS data, remember that your flagged outliers are not exhaustive, and may themselves only be liked to the variant that is truely under selection.
 
@@ -74,9 +74,9 @@ VCF=/location/of/vcf
 
 Our data tree will look like:
 
-> outlier_analysis
+> :heavy_check_mark: outlier_analysis
 > ss
->s
+> s
 > analysis
 >    ├── bayescan
 > │   ├── baypass
@@ -140,17 +140,20 @@ plot(starlings_pcadapt_kplot, option = "screeplot")
 dev.off()
 </code></pre>
 
-
-
 K value of 3 is most appropriate.
 
+```
 starlings_pcadapt_pca <- pcadapt(starlings_pcadapt, K = 3)
 summary(starlings_pcadapt_pca)
-                Length Class  Mode
-scores            117  -none- numeric
-singular.values     3  -none- numeric
-loadings        15021  -none- numeric
-zscores         15021  -none- numeric
+```
+> test
+> 
+> test
+>                 Length Class  Mode
+> scores            117  -none- numeric
+> singular.values     3  -none- numeric
+> loadings        15021  -none- numeric
+> zscores         15021  -none- numeric
 af               5007  -none- numeric
 maf              5007  -none- numeric
 chi2.stat        5007  -none- numeric
