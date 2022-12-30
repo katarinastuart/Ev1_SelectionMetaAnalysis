@@ -246,34 +246,68 @@ The VCFTools manual is available [here](https://vcftools.sourceforge.net/man_lat
 
 Fst outliers will allow us to identify SNPs that behave abnormally in pairwise comparisons between populations.
 
-The first things we need to do is , so we three individual files containing just the list of individuals in each of the populations. We can do this by subseting our sample metadata file.
+The first things we need to do is , so we three individual files containing just the list of individuals in each of the populations. We can do this by subseting our sample metadata file (grabbing the lines which match each population name, and keeping only the column of information which has the sample names).
 
-```cd /srv/scratch/z5188231/KStuart.Starling-Aug18/Ev1_SelectionMetaAnalysis/data
+```module load vcftools/0.1.16
+```
 
-grep "Lemon" 3pops.txt > 3pops_Lemon.txt
-grep "War" 3pops.txt > 3pops_War.txt
-grep "Nowra" 3pops.txt > 3pops_Nowra.txt
-Now we can run the pairwise analysis. Let's focus on just Lemon v.s. War
+```cd $DIR/data
 
-module load vcftools/0.1.16
+grep "Lemon" 3pops.txt | awk '{print $2}' > 3pops_Lemon.txt
+grep "War" 3pops.txt | awk '{print $2}' > 3pops_War.txt
+grep "Nowra" 3pops.txt | awk '{print $2}' > 3pops_Nowra.txt
+```
 
-cd /srv/scratch/z5188231/KStuart.Starling-Aug18/Ev1_SelectionMetaAnalysis/analysis/vcftools_fst
+Now we can pick two populations to compare. Let's work with Lemon Tree and Warnambool, and so a SNP-based Fst comparison.
 
-VCF=/srv/scratch/z5188231/KStuart.Starling-Aug18/Ev1_SelectionMetaAnalysis/data/starling_3populations.recode.vcf
+```cd $DIR/analysis/vcftools_fst
 
-vcftools --vcf $VCF --weir-fst-pop ../../data/3pops_Lemon.txt --weir-fst-pop ../../data/3pops_War.txt --out lemon_war_fst
+vcftools --vcf $VCF --weir-fst-pop $DIR/data/3pops_Lemon.txt --weir-fst-pop $DIR/data/3pops_War.txt --out lemon_war_fst
 
 head lemon_war_fst.weir.fst
+```
+> :heavy_check_mark: **Output** <br>
+> &emsp;
+> OUTPUT NEEDED
 
-wc -l lemon_war_fst.weir.fst 
-try stepped windows
+The important column is column 5: the Weighted Fst, from [Weir and Cockerham’s 1984 publication](https://www.jstor.org/stable/2408641). This corrects for INFO NEEDED.
 
-vcftools --vcf $VCF --fst-window-size 50000 --fst-window-step 10000 --weir-fst-pop ../../data/3pops_Lemon.txt --weir-fst-pop ../../data/3pops_War.txt --out lemon_war_fst
+```wc -l lemon_war_fst.weir.fst 
+```
+
+> :heavy_check_mark: **Output** <br>
+> &emsp;
+> OUTPUT NEEDED
+
+Notice how there are as many lines as there are SNPs in the data set. It is always a good idea to check your output, and make sure everything looks as you expect it to!
+
+Next, instead of calculating pairwise populaiton differentiation on a SNP by SNP basis, we will be usiing a sliding window approach. The ``--fst-window-size 50000`` refers to the window size of the genome (in bsae pairs) in which we are calculating one value: all SNPs within this window are used to caluclate Fst. The ``--fst-window-step`` option indicates how many base pairs the window is moving down the genome before calculating Fst for the second window, and then the third, and so on. 
+
+> :heavy_exclamation_mark: **Warning**
+> &emsp;
+> These sliding windowsm only work on ordered SNPs on the same chromosome/scaffold/contig. If you data is not set up like this (i.e. all your SNPs are on a single pseudo chromosome) then this method is not appropriate for your data, as it will be making an assumption about where the SNPs are located with respect to one another.
+
+```vcftools --vcf $VCF --fst-window-size 50000 --fst-window-step 10000 --weir-fst-pop $DIR/data/3pops_Lemon.txt --weir-fst-pop $DIR/data/3pops_War.txt --out lemon_war_fst
 
 head lemon_war_fst.windowed.weir.fst
+```
+> :heavy_check_mark: **Output** <br>
+> &emsp;
+> OUTPUT NEEDED
 
-wc -l lemon_war_fst.windowed.weir.fst 
-plotting
+Notice the output is different.
+
+```wc -l lemon_war_fst.windowed.weir.fst 
+```
+
+> :heavy_check_mark: **Output** <br>
+> &emsp;
+> OUTPUT NEEDED
+
+Notice the line count is different from the SNP-based Fst comparison; there are more lines in the sliding window based Fst comparison. This is because there are more sliding windows across the chromosome in this data set than there are SNPs. Consider which of these steps is better for your data: in low density SNP datasets, the sliding window approach might not be the best to use.
+
+How let's plot the Fst across the chromosome.
+
 
 awk '{print $0"\t"NR}' ./lemon_war_fst.windowed.weir.fst  > lemon_war_fst.windowed.weir.fst.edit
 
