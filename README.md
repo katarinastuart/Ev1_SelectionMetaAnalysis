@@ -168,7 +168,11 @@ Ignore the warning:
 
 > :heavy_exclamation_mark: Use of `df$Pop` is discouraged. Use `Pop` instead.
 
-Investigate manhattan and qqplot:
+Investigate manhattan and Q-Qplot:
+
+> :beginner: **Manhattan plots** are a way to visualise the GWAS (genome-wide association study) p-values (or other statistical values) at each SNP locus along the genome
+
+> :beginner: **Q-Qplots plots** are just a quick way to visually check if your residuals are normally distributed. Check out more information [here](https://data.library.virginia.edu/understanding-q-q-plots/).
 
 ```
 pdf("pcadapt_starlings_manhattan.pdf")
@@ -207,7 +211,7 @@ length(outliers)
 > &emsp;
 > [1] 3
 
-After this, we will be jumping out of R and back into the command line. 
+After this, we will be jumping out of R and back into the command line by using the command: 
 
 ```q()
 ```
@@ -216,29 +220,35 @@ Mapping Outliers: PCAdapt
 
 finding the SNP ID of the outlier variants
 
-cd /srv/scratch/z5188231/KStuart.Starling-Aug18/Ev1_SelectionMetaAnalysis/analysis/
+```cd $DIR/analysis
+```
 
-#create list of SNPs in VCF, assign line numbers that can be used to find matching line numbers in outliers (SNP ID is lost in PCadapt & Bayescan, line numbers used as signifiers).
-#we create this in the analysis folder because we will use it for more than just mapping the outlier SNPs for PCAdapt
-grep -v "^#" ../../data/starling_3populations.recode.vcf | cut -f1-3 | awk '{print $0"\t"NR}' > starling_3populations_SNPs.txt
+The first thing we will do is create list of SNPs in VCF, assign line numbers that can be used to find matching line numbers in outliers (SNP ID is lost in PCadapt & Bayescan, line numbers used as signifiers). 
 
-#grab column 2 of the outlier file, which contain the number of the outliers
-awk '{print $2}' starlings_pcadapt_outliers.txt > starlings_pcadapt_outliers_numbers.txt
+We create this in the analysis folder because we will use it for more than just mapping the outlier SNPs for PCAdapt.
 
-#list of outlier SNPS ID's
-awk 'FNR==NR{a[$1];next} (($4) in a)' starlings_pcadapt_outliers_numbers.txt ../starling_3populations_SNPs.txt   | cut -f3 > snp_pcadapt_outliers_SNPs.txt
+```grep -v "^#" ../../data/starling_3populations.recode.vcf | cut -f1-3 | awk '{print $0"\t"NR}' > starling_3populations_SNPs.txt
+```
 
+We grab column 2 of the outlier file using the ``AWK`` command, which contain the number of the outliers
 
+```awk '{print $2}' starlings_pcadapt_outliers.txt > starlings_pcadapt_outliers_numbers.txt
+```
 
+We now make a list of outlier SNPS ID's
 
+```awk 'FNR==NR{a[$1];next} (($4) in a)' starlings_pcadapt_outliers_numbers.txt ../starling_3populations_SNPs.txt   | cut -f3 > snp_pcadapt_outliers_SNPs.txt
+```
 
+## VCFtools windowed Fst
 
-VCFtools windowed Fst:
-https://vcftools.sourceforge.net/man_latest.html
+The VCFTools manual is available [here](https://vcftools.sourceforge.net/man_latest.html).
 
-We can work with out VCF file. But need to set up popfiles for pairwise comparisons
+Fst outliers will allow us to identify SNPs that behave abnormally in pairwise comparisons between populations.
 
-cd /srv/scratch/z5188231/KStuart.Starling-Aug18/Ev1_SelectionMetaAnalysis/data
+The first things we need to do is , so we three individual files containing just the list of individuals in each of the populations. We can do this by subseting our sample metadata file.
+
+```cd /srv/scratch/z5188231/KStuart.Starling-Aug18/Ev1_SelectionMetaAnalysis/data
 
 grep "Lemon" 3pops.txt > 3pops_Lemon.txt
 grep "War" 3pops.txt > 3pops_War.txt
