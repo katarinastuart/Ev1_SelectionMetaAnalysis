@@ -213,31 +213,36 @@ length(outliers)
 
 After this, we will be jumping out of R and back into the command line by using the command: 
 
-```q()
+```
+q()
 ```
 
 Mapping Outliers: PCAdapt
 
 finding the SNP ID of the outlier variants
 
-```cd $DIR/analysis
+```
+cd $DIR/analysis
 ```
 
 The first thing we will do is create list of SNPs in VCF, assign line numbers that can be used to find matching line numbers in outliers (SNP ID is lost in PCadapt & Bayescan, line numbers used as signifiers). 
 
 We create this in the analysis folder because we will use it for more than just mapping the outlier SNPs for PCAdapt.
 
-```grep -v "^#" ../../data/starling_3populations.recode.vcf | cut -f1-3 | awk '{print $0"\t"NR}' > starling_3populations_SNPs.txt
+```
+grep -v "^#" ../../data/starling_3populations.recode.vcf | cut -f1-3 | awk '{print $0"\t"NR}' > starling_3populations_SNPs.txt
 ```
 
 We grab column 2 of the outlier file using the ``AWK`` command, which contain the number of the outliers
 
-```awk '{print $2}' starlings_pcadapt_outliers.txt > starlings_pcadapt_outliers_numbers.txt
+```
+awk '{print $2}' starlings_pcadapt_outliers.txt > starlings_pcadapt_outliers_numbers.txt
 ```
 
 We now make a list of outlier SNPS ID's
 
-```awk 'FNR==NR{a[$1];next} (($4) in a)' starlings_pcadapt_outliers_numbers.txt ../starling_3populations_SNPs.txt   | cut -f3 > snp_pcadapt_outliers_SNPs.txt
+```
+awk 'FNR==NR{a[$1];next} (($4) in a)' starlings_pcadapt_outliers_numbers.txt ../starling_3populations_SNPs.txt   | cut -f3 > snp_pcadapt_outliers_SNPs.txt
 ```
 
 ## VCFtools windowed Fst
@@ -248,10 +253,12 @@ Fst outliers will allow us to identify SNPs that behave abnormally in pairwise c
 
 The first things we need to do is , so we three individual files containing just the list of individuals in each of the populations. We can do this by subseting our sample metadata file (grabbing the lines which match each population name, and keeping only the column of information which has the sample names).
 
-```module load vcftools/0.1.16
+```
+module load vcftools/0.1.16
 ```
 
-```cd $DIR/data
+```
+cd $DIR/data
 
 grep "Lemon" 3pops.txt | awk '{print $2}' > 3pops_Lemon.txt
 grep "War" 3pops.txt | awk '{print $2}' > 3pops_War.txt
@@ -260,7 +267,8 @@ grep "Nowra" 3pops.txt | awk '{print $2}' > 3pops_Nowra.txt
 
 Now we can pick two populations to compare. Let's work with Lemon Tree and Warnambool, and so a SNP-based Fst comparison.
 
-```cd $DIR/analysis/vcftools_fst
+```
+cd $DIR/analysis/vcftools_fst
 
 vcftools --vcf $VCF --weir-fst-pop $DIR/data/3pops_Lemon.txt --weir-fst-pop $DIR/data/3pops_War.txt --out lemon_war_fst
 
@@ -272,7 +280,8 @@ head lemon_war_fst.weir.fst
 
 The important column is column 5: the Weighted Fst, from [Weir and Cockerham’s 1984 publication](https://www.jstor.org/stable/2408641). This corrects for INFO NEEDED.
 
-```wc -l lemon_war_fst.weir.fst 
+```
+wc -l lemon_war_fst.weir.fst 
 ```
 
 > :heavy_check_mark: **Output** <br>
@@ -287,7 +296,8 @@ Next, instead of calculating pairwise populaiton differentiation on a SNP by SNP
 > &emsp;
 > These sliding windowsm only work on ordered SNPs on the same chromosome/scaffold/contig. If you data is not set up like this (i.e. all your SNPs are on a single pseudo chromosome) then this method is not appropriate for your data, as it will be making an assumption about where the SNPs are located with respect to one another.
 
-```vcftools --vcf $VCF --fst-window-size 50000 --fst-window-step 10000 --weir-fst-pop $DIR/data/3pops_Lemon.txt --weir-fst-pop $DIR/data/3pops_War.txt --out lemon_war_fst
+```
+vcftools --vcf $VCF --fst-window-size 50000 --fst-window-step 10000 --weir-fst-pop $DIR/data/3pops_Lemon.txt --weir-fst-pop $DIR/data/3pops_War.txt --out lemon_war_fst
 
 head lemon_war_fst.windowed.weir.fst
 ```
@@ -297,7 +307,8 @@ head lemon_war_fst.windowed.weir.fst
 
 Notice the output is different.
 
-```wc -l lemon_war_fst.windowed.weir.fst 
+```
+wc -l lemon_war_fst.windowed.weir.fst 
 ```
 
 > :heavy_check_mark: **Output** <br>
@@ -306,9 +317,9 @@ Notice the output is different.
 
 Notice the line count is different from the SNP-based Fst comparison; there are more lines in the sliding window based Fst comparison. This is because there are more sliding windows across the chromosome in this data set than there are SNPs. Consider which of these steps is better for your data: in low density SNP datasets, the sliding window approach might not be the best to use.
 
-How let's plot the Fst across the chromosome.
+How let's plot the Fst across the chromosome. Let's create somee line numbers on our Fst file that will be used to order the Fst measurements across the x-axis of our manhattan plot.
 
-
+```
 awk '{print $0"\t"NR}' ./lemon_war_fst.windowed.weir.fst  > lemon_war_fst.windowed.weir.fst.edit
 
 module load R/3.5.3
@@ -322,117 +333,115 @@ windowed_fst <- read.table("lemon_war_fst.windowed.weir.fst.edit", sep="\t", hea
 str(windowed_fst)
 
 quantile(windowed_fst$WEIGHTED_FST, probs = c(.95, .99, .999))
+```
 
+Choose the quantile threshold above which SNPs will be classified as outliers.
+
+```
 pdf("fst_starlings_windowed.pdf", width=10, height=5)
 ggplot(windowed_fst, aes(x=X1, y=WEIGHTED_FST)) + 
 geom_point() + 
 theme_classic() +
 geom_hline(yintercept=0.35, linetype="dashed", color = "red")
 dev.off()
+```
+
+PIC
 
 
-A much better example:
+Finally, we will generate a list of outier SNP IDs. We do this by grabbing all of the SNPs located in the ourlier windows. 
 
-
-
-Grabbing the outliers
-
-cd /srv/scratch/z5188231/KStuart.Starling-Aug18/Ev1_SelectionMetaAnalysis/analysis/vcftools_fst
+```
+cd $DIR/analysis/vcftools_fst
 cat lemon_war_fst.windowed.weir.fst.edit | awk '$5>0.35' > lemon_war_fst.windowed.outliers
 wc -l lemon_war_fst.windowed.outliers
-#112 lemon_war_fst.windowed.outliers
+```
+> :heavy_check_mark: **Output** <br>
+> &emsp;
+> 112 lemon_war_fst.windowed.outliers
 
+```
 cat lemon_war_fst.windowed.weir.fst.edit | awk '$5>0.35 ' | cut -f1-3 > lemon_war_fst.windowed.outliers.bed 
 vcftools --vcf $VCF --bed lemon_war_fst.windowed.outliers.bed --out fst_outliers --recode
-#After filtering, kept 63 out of a possible 5007 Sites
+grep -v "#" fst_outliers.recode.vcf | awk '{print $3}' > vcftools_fst.outlierSNPIDs.txt
+```
+> :heavy_check_mark: **Output** <br>
+> &emsp;
+> After filtering, kept 63 out of a possible 5007 Sites
+
+We have a total of 63 outlier SNPs locate across 112 outlier SNP windows.
 
 
+## Bayescan
 
+The VCFTools manual is available [here](https://github.com/mfoll/BayeScan).
 
+Bayescan identified outlier SNPs based on allele frequencies. More explination about alpha and such.
 
+First, we will need to convert out VCF to the Bayescan format. To do this we will use the genetic file conversion program called [PGDspider](http://www.cmpg.unibe.ch/software/PGDSpider/). 
 
-Bayescan:
-https://github.com/mfoll/BayeScan
+```
+cd $DIR/programs
+wget COMMAND
+```
 
-Run PGDSpider to convert file for bayescan: http://www.cmpg.unibe.ch/software/PGDSpider/
+We now run PGDSpider in two steps: first we convert the VCF file to the PGD format, second from PGD format to Bayescan format. To do this we will need to create a SPID file. create a file called *VCF_PGD.spid* using the ``nano`` command. Paste in the below, replacing the location of you metadata file.
 
-to PGD format:
-
-cd /srv/scratch/z5188231/KStuart.Starling-Aug18/Ev1_SelectionMetaAnalysis/analysis/bayescan
-
-java -Xmx1024m -Xms512m -jar /srv/scratch/z5188231/KStuart.Starling-Aug18/programs/PGDSpider_2.1.1.5/PGDSpider2-cli.jar -inputfile /srv/scratch/z5188231/KStuart.Starling-Aug18/Ev1_SelectionMetaAnalysis/data/starling_3populations.recode.vcf -inputformat VCF -outputfile starling_3populations.txt -outputformat  PGD -spid VCF_PGD.spid 
 include snapshot of SPID:
 
 
-# spid-file generated: Thu Aug 13 19:52:55 AEST 2020
+> \# VCF Parser questions <br>
+> PARSER_FORMAT=VCF <br>
+> \# Only output SNPs with a phred-scaled quality of at least: <br>
+> VCF_PARSER_QUAL_QUESTION= <br>
+> \# Select population definition file: <br>
+> VCF_PARSER_POP_FILE_QUESTION=/srv/scratch/z5188231/KStuart.Starling-Aug18/Ev1_SelectionMetaAnalysis/data/3pops_pops.txt <br>
+> \# What is the ploidy of the data? <br>
+> VCF_PARSER_PLOIDY_QUESTION=DIPLOID <br>
+> \# Do you want to include a file with population definitions? <br>
+> VCF_PARSER_POP_QUESTION=true <br>
+> \# Output genotypes as missing if the phred-scale genotype quality is below: <br>
+> VCF_PARSER_GTQUAL_QUESTION= <br>
+> \# Do you want to include non-polymorphic SNPs? <br>
+> VCF_PARSER_MONOMORPHIC_QUESTION=false <br>
+> \# Only output following individuals (ind1, ind2, ind4, ...): <br>
+> VCF_PARSER_IND_QUESTION= <br>
+> \# Only input following regions (refSeqName:start:end, multiple regions: whitespace separated): <br>
+> VCF_PARSER_REGION_QUESTION= <br>
+> \# Output genotypes as missing if the read depth of a position for the sample is below: <br>
+> VCF_PARSER_READ_QUESTION= <br>
+> \# Take most likely genotype if "PL" or "GL" is given in the genotype field? <br>
+> VCF_PARSER_PL_QUESTION=false <br>
+> \# Do you want to exclude loci with only missing data? <br>
+> VCF_PARSER_EXC_MISSING_LOCI_QUESTION=false <br>
+>  <br>
+> \# PGD Writer questions <br>
+> WRITER_FORMAT=PGD <br>
 
-# VCF Parser questions
 
-PARSER_FORMAT=VCF
+```
+head FILE
+```
 
-# Only output SNPs with a phred-scaled quality of at least:
 
-VCF_PARSER_QUAL_QUESTION=
-
-# Select population definition file:
-
-VCF_PARSER_POP_FILE_QUESTION=/srv/scratch/z5188231/KStuart.Starling-Aug18/Ev1_SelectionMetaAnalysis/data/3pops_pops.txt
-
-# What is the ploidy of the data?
-
-VCF_PARSER_PLOIDY_QUESTION=DIPLOID
-
-# Do you want to include a file with population definitions?
-
-VCF_PARSER_POP_QUESTION=true
-
-# Output genotypes as missing if the phred-scale genotype quality is below:
-
-VCF_PARSER_GTQUAL_QUESTION=
-
-# Do you want to include non-polymorphic SNPs?
-
-VCF_PARSER_MONOMORPHIC_QUESTION=false
-
-# Only output following individuals (ind1, ind2, ind4, ...):
-
-VCF_PARSER_IND_QUESTION=
-
-# Only input following regions (refSeqName:start:end, multiple regions: whitespace separated):
-
-VCF_PARSER_REGION_QUESTION=
-
-# Output genotypes as missing if the read depth of a position for the sample is below:
-
-VCF_PARSER_READ_QUESTION=
-
-# Take most likely genotype if "PL" or "GL" is given in the genotype field?
-
-VCF_PARSER_PL_QUESTION=false
-
-# Do you want to exclude loci with only missing data?
-
-VCF_PARSER_EXC_MISSING_LOCI_QUESTION=false
+>  au05_men        SOUTH <br>
+>  au06_men        SOUTH
 
 
 
-# PGD Writer questions
+Now run the two step convserion.
 
-WRITER_FORMAT=PGD
+```
+cd $DIR/analysis/bayescan
 
+java -Xmx1024m -Xms512m -jar $DIR/programs/PGDSpider_2.1.1.5/PGDSpider2-cli.jar -inputfile $VCF -inputformat VCF -outputfile starling_3populations.pgd -outputformat  PGD -spid VCF_PGD.spid 
 
+java -Xmx1024m -Xms512m -jar $DIR/programs/PGDSpider_2.1.1.5/PGDSpider2-cli.jar -inputfile starling_3populations.pgd -inputformat PGD -outputfile starling_3populations.bs -outputformat GESTE_BAYE_SCAN
+```
 
-au05_men        SOUTH
+Now let's set Bayescan to run.
 
-au06_men        SOUTH
-
-
-
-then convert to bayescan
-
-java -Xmx1024m -Xms512m -jar /srv/scratch/z5188231/KStuart.Starling-Aug18/programs/PGDSpider_2.1.1.5/PGDSpider2-cli.jar -inputfile starling_3populations.txt -inputformat PGD -outputfile starling_3populations.bs -outputformat GESTE_BAYE_SCAN
-BAYESCAN RUNS
-
+```
 #!/bin/bash
 #PBS -N 2021-11-21.bayescan_starling.pbs
 #PBS -V
@@ -448,11 +457,11 @@ module load bayescan/2.1
 cd /srv/scratch/z5188231/KStuart.Starling-Aug18/Ev1_SelectionMetaAnalysis/analysis/bayescan
 
 bayescan_2.1 ./starling_3populations.bs -od ./ -threads 16 -n 5000 -thin 10 -nbp 20 -pilot 5000 -burn 50000 -pr_odds 10
-
+```
  
-
 Identify outliers:
 
+```
 module load R/3.5.3
 R
 library(ggplot2)
@@ -461,13 +470,14 @@ source("/apps/bayescan/2.1/R\ functions/plot_R.r")
 outliers.bayescan=plot_bayescan("/srv/scratch/z5188231/KStuart.Starling-Aug18/Ev1_SelectionMetaAnalysis/analysis/bayescan/starling_3population_fst.txt",FDR=0.05)
 outliers.bayescan
 write.table(outliers.bayescan, file="bayscan_outliers.txt")
-
-
+```
 
 
 Mapping Outliers
 
-cd /srv/scratch/z5188231/KStuart.Starling-Aug18/Ev1_SelectionMetaAnalysis/analysis/bayescan
+```
+cd $DIR/analysis/bayescan
+```
 
 #create list of SNPs in VCF, assign line numbers that can be used to find matching line numbers in outliers (SNP ID is lost in bayescan, line numbers used as signifiers).
 
