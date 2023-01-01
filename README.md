@@ -1,4 +1,4 @@
-# Ev1_SelectionMetaAnalysis
+# Outlier Analysis Workshop
 
 There are lots of interesting patterns that you can extract from genetic marker data. This can include patterns of linkage, balancing selection, or even inbreeding signals. One of the most common ones is to try find sites on the genome that are under divergent selection. The following vignette will take you through the basics of genetic selection analysis. 
 
@@ -52,7 +52,37 @@ also include  an hour of group discussion on one of the days about research ques
 
 
 
-## What data are we starting with
+
+
+## Define you working directory for this project, and the VCF file location:
+
+```
+mkdir ~/outlier_analysis
+DIR=~/outlier_analysis
+cd $DIR
+VCF=
+```
+
+Our data tree will look like:
+
+> outlier_analysis/ <br>
+> ├── analysis <br>
+> │   ├── bayescan <br>
+> │   ├── baypass <br>
+> │   ├── pcadapt <br>
+> │   ├── summary <br>
+> │   └── vcftools_fst <br>
+> ├── data 
+> └── programs <br>
+
+
+So lets set up our directories to match this
+
+<pre class="r"><code>cd $DIR
+mkdir -p {analysis/{bayescan,baypass,pcadapt,summary,vcftools_fst},data,programs}
+</code></pre>
+
+## Project data
 
 Metadata file, including individual and population names
 
@@ -60,35 +90,18 @@ covariates inc. environmental metadata.
 
 The a genetic file. We will start with a VCF file.
 
-Working with your own data
+```
+github grab folder
+```
 
+## Working with your own data
 
-## Define you working directory for this project, and the VCF file location:
+You can also use your own data for this workshop. If so, it is a good idea to thin your SNP dataset down to rughly 5,000 SNPs to ensure compute times are not too long.
 
-<pre class="r"><code>cd ~
-mkdir outlier_analysis
-DIR=~/outlier_analysis
-cd $DIR
+```
+Vcftools line
 VCF=/location/of/vcf
-</code></pre>
-
-Our data tree will look like:
-
-> outlier_analysis <br>
-> analysis <br>
-> ├── bayescan <br>
-> │   ├── baypass <br>
-> │   ├── pcadapt <br>
-> │   ├── summary <br>
-> │   └── vcftools_fst <br>
-> └── data <br>
-
-
-So lets set up our directories to match this
-
-<pre class="r"><code>cd $DIR
-mkdir -p {analysis/{bayescan,baypass,pcadapt,summary,vcftools_fst},data}
-</code></pre>
+```
 
 ## PCAdapt
 
@@ -112,7 +125,7 @@ R
 install.packages("pcadapt")
 library(pcadapt)
 
-setwd("/srv/scratch/z5188231/KStuart.Starling-Aug18/Ev1_SelectionMetaAnalysis/analysis/pcadapt/")
+setwd("/home/z5188231/outlier_analysis/analysis/pcadapt/")
 </code></pre>
 
 <pre class="r"><code>starling_bed <- "/srv/scratch/z5188231/KStuart.Starling-Aug18/Ev1_SelectionMetaAnalysis/data/starling_3populations.bed"
@@ -382,7 +395,7 @@ First, we will need to convert out VCF to the Bayescan format. To do this we wil
 
 ```
 cd $DIR/programs
-wget COMMAND
+wget http://www.cmpg.unibe.ch/software/PGDSpider/PGDSpider_2.1.1.5.zip
 ```
 
 We now run PGDSpider in two steps: first we convert the VCF file to the PGD format, second from PGD format to Bayescan format. To do this we will need to create a SPID file. create a file called *VCF_PGD.spid* using the ``nano`` command. Paste in the below, replacing the location of you metadata file.
