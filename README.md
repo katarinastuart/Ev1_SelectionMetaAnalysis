@@ -72,7 +72,7 @@ Our data tree will look like:
 > │   ├── pcadapt <br>
 > │   ├── summary <br>
 > │   └── vcftools_fst <br>
-> ├── data 
+> ├── data  <br>
 > └── programs <br>
 
 
