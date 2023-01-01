@@ -479,17 +479,23 @@ Mapping Outliers
 cd $DIR/analysis/bayescan
 ```
 
-#create list of SNPs in VCF, assign line numbers that can be used to find matching line numbers in outliers (SNP ID is lost in bayescan, line numbers used as signifiers).
+Create list of SNPs in VCF, assign line numbers that can be used to find matching line numbers in outliers (SNP ID is lost in bayescan, line numbers used as signifiers).
 
+```
 grep -v "^#" ../../data/starling_3populations.recode.vcf  | cut -f1-3 | awk '{print $0"\t"NR}' > starling_3populations_SNPs.txt
 
 awk '{print $2}' bayscan_outliers.txt > bayscan_outliers_numbers.txt
+```
 
-#list of outlier SNPS
+list of outlier SNPS, by matching column 1 of of the outliers list to the fourth column of the whole SNP list data.
+
+```
 awk 'FNR==NR{a[$1];next} (($4) in a)' bayscan_outliers_numbers.txt starling_3populations_SNPs.txt   | cut -f3 > bayscan_outliers_SNPs.txt
+```
 
-Bayescane Log Plot
+Bayescane Log Plot, colouring the outliers in a different colour.
 
+```
 module load R/3.5.3
 R
 library(ggplot2)
@@ -506,35 +512,40 @@ ggplot(bayescan.out, aes(x=log10.PO., y=alpha))+
 geom_point(size=5,alpha=1)+xlim(-1.3,3.5)+ theme_classic(base_size = 18) + geom_vline(xintercept = 0, linetype="dashed", color = "black", size=3)+
 geom_point(aes(x=log10.PO., y=alpha), data=outliers.plot, col="red", fill="red",size=5,alpha=1) + theme(axis.text=element_text(size=18), axis.title=element_text(size=22,face="bold"))
 dev.off()
+```
 
 
+## BayPass
 
+The Baypass manual can be found [here](http://www1.montpellier.inra.fr/CBGP/software/baypass/files/BayPass_manual_2.31.pdf).
 
+Baypass requires that the allele frequency data be on a population, not an individual basis. The genotyping data file is simply organized as a matrix with nsnp rows and 2 ∗ npop columns. The row field separator is a space. More precisely, each row corresponds to one marker and the number of columns is twice the number of populations because each pair of numbers corresponds to each allele (or read counts for PoolSeq experiment) counts in one population. To generate this population gene count data we will work with the PLINK file.
 
-
-
-
-BayPass:
-http://www1.montpellier.inra.fr/CBGP/software/baypass/files/BayPass_manual_2.31.pdf
-
-
-
-PLINK=/srv/scratch/z5188231/KStuart.Starling-Aug18/Ev1_SelectionMetaAnalysis/data/starling_3populations.plink.ped
+```
+PLINK=$DIR/data/starling_3populations.plink.ped
 
 cut -f 3- $PLINK > x.delete
-paste 3pops_plink.txt x.delete > starling_3populations.plink.ped
+paste $DIR/data/3pops_plink.txt x.delete > starling_3populations.plink.ped
 rm x.delete 
 cp ../../data/starling_3populations.plink.map .
 cp ../../data/starling_3populations.plink.log .
+```
 
-#run the pop based allele frequency calculations
+run the pop based allele frequency calculations
+
+```
 plink --file starling_3populations.plink --allow-extra-chr --freq counts --family --out starling_3populations
-#manipulate file so it has baypass format, numbers set for plink output file and pop number for column count
+```
+
+manipulate file so it has baypass format, numbers set for plink output file and pop number for column count
+
+```
 tail -n +2 starling_3populations.frq.strat | awk '{ $9 = $8 - $7 } 1' | awk '{print $7,$9}' | tr "\n" " " | sed 's/ /\n/6; P; D' > starling_3populations_baypass.txt
+```
 
+Now we can run Baypass.
 
-Baypass runs:
-
+```
 #!/bin/bash
 #PBS -N 2022-12-08.baypass_starling.pbs
 #PBS -l nodes=1:ppn=16
@@ -549,12 +560,11 @@ module load baypass/2.1
 cd /srv/scratch/z5188231/KStuart.Starling-Aug18/Ev1_SelectionMetaAnalysis/analysis/baypass
 
 g_baypass -npop 3 -gfile ./starling_3populations_baypass.txt -outprefix starling_3populations_baypass -nthreads 16
+```
 
+Running in R to make the anapod data
 
-
-
-Running in R to make the anapod data: 
-
+```
 module load R/3.6.3
 R
 setwd("/srv/scratch/z5188231/KStuart.Starling-Aug18/Ev1_SelectionMetaAnalysis/analysis/baypass")
@@ -566,8 +576,11 @@ omega=as.matrix(read.table("starling_3populations_baypass_mat_omega.out"))
 pi.beta.coef=read.table("starling_3populations_baypass_summary_beta_params.out",h=T)$Mean
 bta14.data<-geno2YN("starling_3populations_baypass.txt")
 simu.bta<-simulate.baypass(omega.mat=omega, nsnp=5000, sample.size=bta14.data$NN, beta.pi=pi.beta.coef,pi.maf=0,suffix="btapods")
+```
 
+We now have the simulated geno data.
 
+```
 #!/bin/bash
 #PBS -N 2022-12-08.baypass_starling2.pbs
 #PBS -l nodes=1:ppn=16
@@ -582,11 +595,11 @@ module load baypass/2.1
 cd /srv/scratch/z5188231/KStuart.Starling-Aug18/Ev1_SelectionMetaAnalysis/analysis/baypass
 
 g_baypass -npop 2 -gfile G.btapods  -outprefix G.btapods -nthreads 16 
-
-
+```
 
 XtX calibration; get the pod XtX
 
+```
 module load R/3.6.3
 R
 setwd("/srv/scratch/z5188231/KStuart.Starling-Aug18/Ev1_SelectionMetaAnalysis/analysis/baypass")
@@ -595,31 +608,47 @@ library("ape")
 library("corrplot")
 
 pod.xtx=read.table("G.btapods_summary_pi_xtx.out",h=T)$M_XtX
-Compute the 1% threshold
+```
 
+We compute the 1% threshold for the simulated neutral data.
+
+```
 pod.thresh=quantile(pod.xtx,probs=0.99)
 pod.thresh
-Threshold is: 4.73302
+```
 
+> :heavy_check_mark: **Output** <br>
+> &emsp;
+> 4.73302
 
+Your values may be slightly different as the simlated data will not be identical.
 
-Filter the data for the outlier snps:
+Next, we filter the data for the outlier snps by identifying those above the threshold.
 
-#Find outliers that are above theanapod threshold
+```
 cat starling_3populations_baypass_summary_pi_xtx.out | awk '$6>4.73302 ' > baypass_outliers.txt
+```
 
-#create list of SNPs in VCF, assign line numbers that can be used to find matching line numbers in outliers (SNP ID is lost in bayescan, line numbers used as signifiers).
+create list of SNPs in VCF, assign line numbers that can be used to find matching line numbers in outliers (SNP ID is lost in bayescan, line numbers used as signifiers).
+
+```
 grep -v "^#" ../../data/starling_3populations.recode.vcf  | cut -f1-3 | awk '{print $0"\t"NR}' > starling_3populations_SNPs.txt
+```
 
-#list of outlier SNPS
+List of outlier SNPS
+
+```
 awk 'FNR==NR{a[$1];next} (($4) in a)' baypass_outliers.txt starling_3populations_SNPs.txt | cut -f3 > baypass_outliers_SNPlist.txt
-wc -l baypass_outliers_SNPlist.txt 
-275
+wc -l baypass_outliers_SNPlist.txt
+```
 
+> :heavy_check_mark: **Output** <br>
+> &emsp;
+> 275
 
+Low lets find SNPs that are statistically associated with covarate data.
 
-Running with covariate data
-
+```
 #!/bin/bash
 #PBS -N 2022-12-08.baypass_starling3.pbs
 #PBS -l nodes=1:ppn=16
@@ -634,11 +663,12 @@ module load baypass
 cd /srv/scratch/z5188231/KStuart.Starling-Aug18/Ev1_SelectionMetaAnalysis/analysis/baypass
 
 g_baypass -npop 3 -gfile starling_3populations_baypass.txt -efile baypass_environment_covariate.txt -scalecov -auxmodel -nthreads 16 -omegafile starling_3populations_baypass_mat_omega.out -outprefix starling_3populations_baypass_enviro
+```
 
 
+Plotting the outliers.
 
-Plotting
-
+```
 module load R/3.6.3
 R
 
@@ -656,20 +686,40 @@ abline(h=20, col="red")
 plot(covaux.snp.res.mass$M_Beta,xlab="SNP",ylab=expression(beta~"coefficient"))
 plot(covaux.snp.xtx.mass, xlab="SNP",ylab="XtX corrected for SMS")
 dev.off()
+```
+ PIC
 
+Finally, lets generate the list of phenotype-associated SNP IDs.
 
+```
+cat starling_3populations_baypass_enviro_summary_betai.out | awk '$6>20' > starling_3populations_baypass_enviro_BF20.txt
+starling_3populations_baypass_enviro_BF20.txt
+```
 
+> :heavy_check_mark: **Output** <br>
+> &emsp;
+> 40
 
 Filtering the data sets for SNPS above BFmc threshold and finding which are also divergent amongst populations
 
-cat starling_3populations_baypass_enviro_summary_betai.out | awk '$6>20' > starling_3populations_baypass_enviro_BF20.txt
-starling_3populations_baypass_enviro_BF20.txt
-#40
-
+```
 awk 'FNR==NR{a[$2];next} (($4) in a)' starling_3populations_baypass_enviro_BF20.txt starling_3populations_SNPs.txt | cut -f3 > starling_3populations_baypass_enviro_BF20_SNPlist.txt
 
 comm -12 <(sort starling_3populations_baypass_enviro_BF20_SNPlist.txt) <(sort baypass_outliers_SNPlist.txt) > output.txt
-#38
+```
+
+> :heavy_check_mark: **Output** <br>
+> &emsp;
+> 38
+
+## COmparing Outlier Overlap
+
+Make an upset plot to compare the outliers.
+
+## Outlier Analysis Metanalysis
+
+Flow diagram.
+
 
 
 ## Funding 
