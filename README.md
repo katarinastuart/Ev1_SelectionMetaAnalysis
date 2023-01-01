@@ -330,7 +330,9 @@ wc -l lemon_war_fst.windowed.weir.fst
 
 Notice the line count is different from the SNP-based Fst comparison; there are more lines in the sliding window based Fst comparison. This is because there are more sliding windows across the chromosome in this data set than there are SNPs. Consider which of these steps is better for your data: in low density SNP datasets, the sliding window approach might not be the best to use.
 
-How let's plot the Fst across the chromosome. Let's create somee line numbers on our Fst file that will be used to order the Fst measurements across the x-axis of our manhattan plot.
+Now let's plot the Fst across the chromosome. To do this we will add line numbers on our Fst file that will be used to order the Fst measurements across the x-axis of our manhattan plot.
+
+> :beginner: **X-axis values** in the following plot are done y using each ourlier window's line number, as they are in order along the genome. Ourlier windows are equally spces, and so line numbers are sufficient to capture the patterns along the genome. Consider that if you are plotting Fst values for SNPs (rather than windows), they may not be equally spaced along the genome and so SNP position may need to be used to make your manhattan plots.
 
 ```
 awk '{print $0"\t"NR}' ./lemon_war_fst.windowed.weir.fst  > lemon_war_fst.windowed.weir.fst.edit
