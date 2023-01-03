@@ -136,11 +136,13 @@ Produce K plot
 
 starlings_pcadapt_kplot <- pcadapt(input = starlings_pcadapt, K = 20)
 
-<pre class="r">
+```
 pdf("pcadapt_starlings_kplot.pdf")
 plot(starlings_pcadapt_kplot, option = "screeplot")
 dev.off()
-</code></pre>
+```
+
+<img src="/images/pcadapt_kplot.PNG" alt="k plot" width="400"/>
 
 K value of 3 is most appropriate.
 
@@ -181,6 +183,8 @@ Ignore the warning:
 
 > :heavy_exclamation_mark: Use of `df$Pop` is discouraged. Use `Pop` instead.
 
+<img src="/images/pcadapt_proj1.PNG" alt="projection axis1 axis2" width="300"/> <img src="/images/pcadapt_proj2.PNG" alt="projection axis6 axis7" width="300"/>
+
 Investigate manhattan and Q-Qplot:
 
 > :beginner: **Manhattan plots** are a way to visualise the GWAS (genome-wide association study) p-values (or other statistical values) at each SNP locus along the genome
@@ -197,6 +201,8 @@ plot(starlings_pcadapt_pca, option = "qqplot")
 dev.off()
 ```
 
+<img src="/images/pcadapt_manhattan.PNG" alt="Manhattan" width="400"/> <img src="/images/pcadapt_qq.PNG" alt="Q-Qplot" width="400"/>
+
 Plotting and correcting the pvalues
 
 ```
@@ -208,6 +214,8 @@ pdf("pcadapt_starlings_pvalues.pdf")
 hist(starlings_pcadapt_pca$pvalues, xlab = "p-values", main = NULL, breaks = 50, col = "orange")
 dev.off()
 ```
+
+<img src="/images/pcadapt_pvals.PNG" alt="pvals" width="450"/>
 
 ```
 starlings_pcadapt_padj <- p.adjust(starlings_pcadapt_pca$pvalues,method="bonferroni")
@@ -361,8 +369,7 @@ geom_hline(yintercept=0.35, linetype="dashed", color = "red")
 dev.off()
 ```
 
-PIC
-
+<img src="/images/Fst_Windowed.PNG" alt="Windowed Fst" width="600"/>
 
 Finally, we will generate a list of outier SNP IDs. We do this by grabbing all of the SNPs located in the ourlier windows. 
 
@@ -528,7 +535,7 @@ geom_point(size=5,alpha=1)+xlim(-1.3,3.5)+ theme_classic(base_size = 18) + geom_
 geom_point(aes(x=log10.PO., y=alpha), data=outliers.plot, col="red", fill="red",size=5,alpha=1) + theme(axis.text=element_text(size=18), axis.title=element_text(size=22,face="bold"))
 dev.off()
 ```
-
+<img src="/images/bayescan_outliers.png" alt="Windowed Fst" width="300"/>
 
 ## BayPass
 
@@ -702,7 +709,8 @@ plot(covaux.snp.res.mass$M_Beta,xlab="SNP",ylab=expression(beta~"coefficient"))
 plot(covaux.snp.xtx.mass, xlab="SNP",ylab="XtX corrected for SMS")
 dev.off()
 ```
- PIC
+
+<img src="/images/Baypass.PNG" alt="Baypass output" width="500"/>
 
 Finally, lets generate the list of phenotype-associated SNP IDs.
 
