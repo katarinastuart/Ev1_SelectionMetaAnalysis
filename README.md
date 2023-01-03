@@ -98,23 +98,21 @@ VCF=$DIR/data/starling_3populations.recode.vcf
 METADATA=$DIR/data/starling_3populations_metadata.txt
 ```
 
+> :heavy_exclamation_mark: **Working with your own data** <br> 
+> <br>
+> Alternatively, you can also use your own data for this workshop. If so, it is a good idea to thin your SNP dataset down to roughly 5,000 SNPs to ensure compute times are not too long. If you have more than 50 individuals you may also want to reduce this too. If you would like to do this, just place your genetic variant and metadata file in the ``data`` directory and define ``VCF`` and ``METADATA`` based on their names. <br>
+
+
 Across this workshop, we will need the genetic data to be in several different formats. Let's prepare that now. First we convert the VCF to PLINK, and then to BED.
 
 ```
 cd $DIR/data
 module load vcftools/0.1.16
 module load plink/1.90b6.7 
-cp $VCF . #lets make sure we have a copy of our VCF in our project working directory
-vcftools --vcf $VCF --out (basename $VCF .vcf).plink --plink
-plink --file (basename $VCF .vcf).plink --make-bed --noweb --out (basename $VCF .vcf)
+vcftools --vcf $VCF --out starling_3populations.plink --plink
+plink --file starling_3populations.plink --make-bed --noweb --out starling_3populations
 ```
 
-
-
-
-> :heavy_exclamation_mark: **Working with your own data** <br> 
-> <br>
-> Alternatively, you can also use your own data for this workshop. If so, it is a good idea to thin your SNP dataset down to roughly 5,000 SNPs to ensure compute times are not too long. If you have more than 50 individuals you may also want to reduce this too. <br>
 
 
 ## PCAdapt
