@@ -71,13 +71,14 @@ Our data tree will look like:
 > │   ├── pcadapt <br>
 > │   ├── summary <br>
 > │   └── vcftools_fst <br>
+> ├── data  <br>
 > ├── programs  <br>
 > └── workshop_material <br>
 
 
 So lets set up our directories to match this
 
-<pre class="r"><code>mkdir -p {analysis/{bayescan,baypass,pcadapt,summary,vcftools_fst},programs,workshop_material}
+<pre class="r"><code>mkdir -p {analysis/{bayescan,baypass,pcadapt,summary,vcftools_fst},data,programs,workshop_material}
 </code></pre>
 
 ## Project data
@@ -86,16 +87,30 @@ The data provided in this workshop contains 5007 SNPs loci for across 39 individ
 
 There is also a metadata file, that contains the individuals unique IDs, their assigned populations, and a wingspan measurement for each individual. 
 
-Let's grab this data from the project's git resository, and define the environmental variables ``VCF`` and ``METADATA`` with the locations of the genetic variant and metadata files respectively.
+Let's grab this data from the project's git resository, place the data files into our ``data`` directory, and define the environmental variables ``VCF`` and ``METADATA`` with the locations of the genetic variant and metadata files respectively.
 
 ```
 cd $DIR/workshop_material
 git clone https://github.com/katarinastuart/Ev1_SelectionMetaAnalysis.git
-VCF=$DIR/workshop_material/Ev1_SelectionMetaAnalysis/workshop_files/starling_3populations.recode.vcf
-METADATA=$DIR/workshop_material/Ev1_SelectionMetaAnalysis/workshop_files/starling_3populations_metadata.txt
+cp $DIR/workshop_material/Ev1_SelectionMetaAnalysis/workshop_files/* $DIR/data
+VCF=$DIR/data/starling_3populations.recode.vcf
+METADATA=$DIR/data/starling_3populations_metadata.txt
 ```
 
-> :heavy_exclamation_mark: Working with your own data <br> 
+Across this workshop, we will need the genetic data to be in several different formats. Let's prepare that now. First we convert the VCF to PLINK, and then to BED.
+
+```cd $DIR/data
+module load vcftools/0.1.16
+module load plink/1.90b6.7 
+cp $VCF . #lets make sure we have a copy of our VCF in our project working directory
+vcftools --vcf $VCF --out (basename $VCF .vcf).plink --plink
+plink --file (basename $VCF .vcf).plink --make-bed --noweb --out (basename $VCF .vcf)
+```
+
+
+
+
+> :heavy_exclamation_mark: **Working with your own data** <br> 
 > <br>
 > Alternatively, you can also use your own data for this workshop. If so, it is a good idea to thin your SNP dataset down to roughly 5,000 SNPs to ensure compute times are not too long. If you have more than 50 individuals you may also want to reduce this too. <br>
 
@@ -104,30 +119,25 @@ METADATA=$DIR/workshop_material/Ev1_SelectionMetaAnalysis/workshop_files/starlin
 
 The PCAdapt manual is available [here](https://bcm-uga.github.io/pcadapt/articles/pcadapt.html).
 
-Let's prepare what we need: first we convert the VCF to PLINK, and then to BED, as we need both file types at various point during this vignette
+Brief summary of PCAdapt. [FIX]
 
-<pre class="r"><code>cd $DIR/data
-module load vcftools/0.1.16
-module load plink/1.90b6.7 
-cp $VCF . #lets make sure we have a copy of our VCF in our project working directory
-vcftools --vcf $VCF --out (basename $VCF .vcf).plink --plink
-plink --file (basename $VCF .vcf).plink --make-bed --noweb --out (basename $VCF .vcf)
-</code></pre>
+Install PCAdapt and set your working directory.
 
-Install PCAdapt, load in the data, and set your working directory.
-
-<pre class="r"><code>module load R/3.5.3
+```module load R/3.5.3
 R
 
 install.packages("pcadapt")
 library(pcadapt)
 
 setwd("/home/z5188231/outlier_analysis/analysis/pcadapt/")
-</code></pre>
+```
 
-<pre class="r"><code>starling_bed <- "/srv/scratch/z5188231/KStuart.Starling-Aug18/Ev1_SelectionMetaAnalysis/data/starling_3populations.bed"
+Now let's load in the data - PCAdapt uses bed file types.
+
+```
+```starling_bed <- "/srv/scratch/z5188231/KStuart.Starling-Aug18/Ev1_SelectionMetaAnalysis/data/starling_3populations.bed"
 starlings_pcadapt <- read.pcadapt(starling_bed, type = "bed")
-</code></pre>
+```
 
 Produce K plot
 
