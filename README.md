@@ -78,8 +78,9 @@ Our data tree will look like:
 
 So lets set up our directories to match this
 
-<pre class="r"><code>mkdir -p {analysis/{bayescan,baypass,pcadapt,summary,vcftools_fst},data,programs,workshop_material}
-</code></pre>
+```
+mkdir -p {analysis/{bayescan,baypass,pcadapt,summary,vcftools_fst},data,programs,workshop_material}
+```
 
 ## Project data
 
@@ -99,7 +100,8 @@ METADATA=$DIR/data/starling_3populations_metadata.txt
 
 Across this workshop, we will need the genetic data to be in several different formats. Let's prepare that now. First we convert the VCF to PLINK, and then to BED.
 
-```cd $DIR/data
+```
+cd $DIR/data
 module load vcftools/0.1.16
 module load plink/1.90b6.7 
 cp $VCF . #lets make sure we have a copy of our VCF in our project working directory
