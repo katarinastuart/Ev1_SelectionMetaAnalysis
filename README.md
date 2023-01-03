@@ -60,7 +60,6 @@ also include  an hour of group discussion on one of the days about research ques
 mkdir ~/outlier_analysis
 DIR=~/outlier_analysis
 cd $DIR
-VCF=
 ```
 
 Our data tree will look like:
@@ -72,36 +71,34 @@ Our data tree will look like:
 > │   ├── pcadapt <br>
 > │   ├── summary <br>
 > │   └── vcftools_fst <br>
-> ├── data  <br>
-> └── programs <br>
+> ├── programs  <br>
+> └── workshop_material <br>
 
 
 So lets set up our directories to match this
 
-<pre class="r"><code>cd $DIR
-mkdir -p {analysis/{bayescan,baypass,pcadapt,summary,vcftools_fst},data,programs}
+<pre class="r"><code>mkdir -p {analysis/{bayescan,baypass,pcadapt,summary,vcftools_fst},programs,workshop_material}
 </code></pre>
 
 ## Project data
 
-Metadata file, including individual and population names
+The data provided in this workshop contains 5007 SNPs loci for across 39 individuals (13 individuals each from 3 different locations). There is some missingness (i.e. missing SNP calls) within this data.
 
-covariates inc. environmental metadata.
+There is also a metadata file, that contains the individuals unique IDs, their assigned populations, and a wingspan measurement for each individual. 
 
-The a genetic file. We will start with a VCF file.
-
-```
-github grab folder
-```
-
-## Working with your own data
-
-You can also use your own data for this workshop. If so, it is a good idea to thin your SNP dataset down to rughly 5,000 SNPs to ensure compute times are not too long.
+Let's grab this data from the project's git resository, and define the environmental variables ``VCF`` and ``METADATA`` with the locations of the genetic variant and metadata files respectively.
 
 ```
-Vcftools line
-VCF=/location/of/vcf
+cd $DIR/workshop_material
+git clone https://github.com/katarinastuart/Ev1_SelectionMetaAnalysis.git
+VCF=$DIR/workshop_material/Ev1_SelectionMetaAnalysis/workshop_files/starling_3populations.recode.vcf
+METADATA=$DIR/workshop_material/Ev1_SelectionMetaAnalysis/workshop_files/starling_3populations_metadata.txt
 ```
+
+> :heavy_exclamation_mark: Working with your own data <br> 
+> <br>
+> Alternatively, you can also use your own data for this workshop. If so, it is a good idea to thin your SNP dataset down to roughly 5,000 SNPs to ensure compute times are not too long. If you have more than 50 individuals you may also want to reduce this too. <br>
+
 
 ## PCAdapt
 
