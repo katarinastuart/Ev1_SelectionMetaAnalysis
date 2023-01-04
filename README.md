@@ -123,7 +123,8 @@ Brief summary of PCAdapt. [FIX]
 
 Install PCAdapt and set your working directory.
 
-```module load R/3.5.3
+```
+module load R/3.5.3
 R
 
 install.packages("pcadapt")
@@ -135,15 +136,14 @@ setwd("/home/z5188231/outlier_analysis/analysis/pcadapt/")
 Now let's load in the data - PCAdapt uses bed file types.
 
 ```
-```starling_bed <- "/srv/scratch/z5188231/KStuart.Starling-Aug18/Ev1_SelectionMetaAnalysis/data/starling_3populations.bed"
+starling_bed <- "/home/z5188231/outlier_analysis/data/starling_3populations.bed"
 starlings_pcadapt <- read.pcadapt(starling_bed, type = "bed")
 ```
 
 Produce K plot
 
-starlings_pcadapt_kplot <- pcadapt(input = starlings_pcadapt, K = 20)
-
 ```
+starlings_pcadapt_kplot <- pcadapt(input = starlings_pcadapt, K = 20)
 pdf("pcadapt_starlings_kplot.pdf")
 plot(starlings_pcadapt_kplot, option = "screeplot")
 dev.off()
@@ -151,7 +151,7 @@ dev.off()
 
 <img src="/images/pcadapt_kplot.PNG" alt="k plot" width="400"/>
 
-K value of 3 is most appropriate.
+K value of 3 is most appropriate, as this is the value of K after which the curve starts to flatten out more.
 
 ```
 starlings_pcadapt_pca <- pcadapt(starlings_pcadapt, K = 3)
@@ -174,7 +174,8 @@ summary(starlings_pcadapt_pca)
 
 Investigate axis projections:
 
-```poplist.names <- c(rep("Lemon", 13),rep("Warrnambool", 13),rep("Nowra", 13))
+```
+poplist.names <- c(rep("Lemon", 13),rep("Warrnambool", 13),rep("Nowra", 13))
 print(poplist.names)
 
 pdf("pcadapt_starlings_projection1v2.pdf")
@@ -255,23 +256,32 @@ cd $DIR/analysis
 
 The first thing we will do is create list of SNPs in VCF, assign line numbers that can be used to find matching line numbers in outliers (SNP ID is lost in PCadapt & Bayescan, line numbers used as signifiers). 
 
-We create this in the analysis folder because we will use it for more than just mapping the outlier SNPs for PCAdapt.
+We create this in the ``analysis`` folder because we will use it for more than just mapping the outlier SNPs for PCAdapt.
 
 ```
-grep -v "^#" ../../data/starling_3populations.recode.vcf | cut -f1-3 | awk '{print $0"\t"NR}' > starling_3populations_SNPs.txt
+grep -v "^#" $DIR/data/starling_3populations.recode.vcf | cut -f1-3 | awk '{print $0"\t"NR}' > starling_3populations_SNPs.txt
 ```
 
-We grab column 2 of the outlier file using the ``AWK`` command, which contain the number of the outliers
+Now let's jump back into the ``pcadapt`` directory to contiue working with our outliers. We grab column 2 of the outlier file using the ``AWK`` command, which contain the number of the outliers
 
 ```
+cd $DIR/analysis/pcadapt
 awk '{print $2}' starlings_pcadapt_outliers.txt > starlings_pcadapt_outliers_numbers.txt
 ```
 
 We now make a list of outlier SNPS ID's
 
 ```
-awk 'FNR==NR{a[$1];next} (($4) in a)' starlings_pcadapt_outliers_numbers.txt ../starling_3populations_SNPs.txt   | cut -f3 > snp_pcadapt_outliers_SNPs.txt
+awk 'FNR==NR{a[$1];next} (($4) in a)' starlings_pcadapt_outliers_numbers.txt ../starling_3populations_SNPs.txt   | cut -f3 > pcadapt_outlierSNPIDs.txt
+head pcadapt_outlierSNPIDs.txt
 ```
+> :heavy_check_mark: **Output** <br>
+> &emsp;
+> 230955:72:-
+> 238881:46:+
+> 286527:46:-
+
+
 
 ## VCFtools windowed Fst
 
@@ -279,7 +289,7 @@ The VCFTools manual is available [here](https://vcftools.sourceforge.net/man_lat
 
 Fst outliers will allow us to identify SNPs that behave abnormally in pairwise comparisons between populations.
 
-The first things we need to do is , so we three individual files containing just the list of individuals in each of the populations. We can do this by subseting our sample metadata file (grabbing the lines which match each population name, and keeping only the column of information which has the sample names).
+The first things we need to do is use our metadata file (currently defined by the environmental variable ``METADATA``) to make three individual files containing just the list of individuals in each of the populations. We can do this by subseting our sample metadata file, using the command ``grep`` to grab lines that match each population's name, and then using ``awk`` to keep only the first column of metadta, i.e. the sample names.
 
 ```
 module load vcftools/0.1.16
@@ -288,60 +298,69 @@ module load vcftools/0.1.16
 ```
 cd $DIR/data
 
-grep "Lemon" 3pops.txt | awk '{print $2}' > 3pops_Lemon.txt
-grep "War" 3pops.txt | awk '{print $2}' > 3pops_War.txt
-grep "Nowra" 3pops.txt | awk '{print $2}' > 3pops_Nowra.txt
+grep "Lemon" $METADATA | awk '{print $1}' > individuals_Lemon.txt
+grep "War" $METADATA | awk '{print $1}' > individuals_War.txt
+grep "Nowra" $METADATA | awk '{print $1}' > individuals_Nowra.txt
 ```
 
-Now we can pick two populations to compare. Let's work with Lemon Tree and Warnambool, and so a SNP-based Fst comparison.
+Now we can pick two populations to compare. Let's work with Lemon (short for Lemon Tree, QLD, AU) and War (short for Warnambool, VIC, AU), and so a SNP-based Fst comparison.
 
 ```
 cd $DIR/analysis/vcftools_fst
 
-vcftools --vcf $VCF --weir-fst-pop $DIR/data/3pops_Lemon.txt --weir-fst-pop $DIR/data/3pops_War.txt --out lemon_war_fst
+vcftools --vcf $VCF --weir-fst-pop $DIR/data/individuals_Lemon.txt --weir-fst-pop $DIR/data/individuals_War.txt --out lemon_war
 
-head lemon_war_fst.weir.fst
+head -n 5 lemon_war.weir.fst
 ```
 > :heavy_check_mark: **Output** <br>
 > &emsp;
-> OUTPUT NEEDED
+> CHROM   POS     WEIR_AND_COCKERHAM_FST<br>
+> starling4       107735  0.160891<br>
+> starling4       137462  -0.0805785<br>
+> starling4       151332  0.0524489<br>
+> starling4       227887  0.0569961<br>
 
 The important column is column 5: the Weighted Fst, from [Weir and Cockerham’s 1984 publication](https://www.jstor.org/stable/2408641). This corrects for INFO NEEDED.
 
 ```
-wc -l lemon_war_fst.weir.fst 
+wc -l lemon_war.weir.fst 
 ```
 
 > :heavy_check_mark: **Output** <br>
 > &emsp;
-> OUTPUT NEEDED
+> 5008
 
-Notice how there are as many lines as there are SNPs in the data set. It is always a good idea to check your output, and make sure everything looks as you expect it to!
+Notice how there are as many lines as there are SNPs in the data set, plus one for a header. It is always a good idea to check your output, and make sure everything looks as you expect it to!
 
 Next, instead of calculating pairwise populaiton differentiation on a SNP by SNP basis, we will be usiing a sliding window approach. The ``--fst-window-size 50000`` refers to the window size of the genome (in bsae pairs) in which we are calculating one value: all SNPs within this window are used to caluclate Fst. The ``--fst-window-step`` option indicates how many base pairs the window is moving down the genome before calculating Fst for the second window, and then the third, and so on. 
 
-> :heavy_exclamation_mark: **Warning**
+> **Warning**
 > &emsp;
-> These sliding windowsm only work on ordered SNPs on the same chromosome/scaffold/contig. If you data is not set up like this (i.e. all your SNPs are on a single pseudo chromosome) then this method is not appropriate for your data, as it will be making an assumption about where the SNPs are located with respect to one another.
+> These sliding windows only work on ordered SNPs on the same chromosome/scaffold/contig. If you data is not set up like this (i.e. all your SNPs are on a single pseudo chromosome) then this method is not appropriate for your data, as it will be making an assumption about where the SNPs are located with respect to one another.
 
 ```
-vcftools --vcf $VCF --fst-window-size 50000 --fst-window-step 10000 --weir-fst-pop $DIR/data/3pops_Lemon.txt --weir-fst-pop $DIR/data/3pops_War.txt --out lemon_war_fst
+vcftools --vcf $VCF --fst-window-size 50000 --fst-window-step 10000 --weir-fst-pop $DIR/data/individuals_Lemon.txt --weir-fst-pop $DIR/data/individuals_War.txt --out lemon_war
 
-head lemon_war_fst.windowed.weir.fst
+head lemon_war.windowed.weir.fst
 ```
 > :heavy_check_mark: **Output** <br>
 > &emsp;
-> OUTPUT NEEDED
+> CHROM   BIN_START       BIN_END N_VARIANTS      WEIGHTED_FST    MEAN_FST <br>
+> starling4       60001   110000  1       0.160891        0.160891 <br>
+> starling4       70001   120000  1       0.160891        0.160891 <br>
+> starling4       80001   130000  1       0.160891        0.160891 <br>
+> starling4       90001   140000  2       -0.00374291     0.0401563 <br>
+
 
 Notice the output is different.
 
 ```
-wc -l lemon_war_fst.windowed.weir.fst 
+wc -l lemon_war.windowed.weir.fst 
 ```
 
 > :heavy_check_mark: **Output** <br>
 > &emsp;
-> OUTPUT NEEDED
+> 10838
 
 Notice the line count is different from the SNP-based Fst comparison; there are more lines in the sliding window based Fst comparison. This is because there are more sliding windows across the chromosome in this data set than there are SNPs. Consider which of these steps is better for your data: in low density SNP datasets, the sliding window approach might not be the best to use.
 
@@ -350,22 +369,28 @@ Now let's plot the Fst across the chromosome. To do this we will add line number
 > :beginner: **X-axis values** in the following plot are done y using each ourlier window's line number, as they are in order along the genome. Ourlier windows are equally spces, and so line numbers are sufficient to capture the patterns along the genome. Consider that if you are plotting Fst values for SNPs (rather than windows), they may not be equally spaced along the genome and so SNP position may need to be used to make your manhattan plots.
 
 ```
-awk '{print $0"\t"NR}' ./lemon_war_fst.windowed.weir.fst  > lemon_war_fst.windowed.weir.fst.edit
+awk '{print $0"\t"NR}' ./lemon_war.windowed.weir.fst  > lemon_war.windowed.weir.fst.edit
 
 module load R/3.5.3
 R
 
 library("ggplot2")
 
-setwd("/srv/scratch/z5188231/KStuart.Starling-Aug18/Ev1_SelectionMetaAnalysis/analysis/vcftools_fst")
+setwd("/home/z5188231/outlier_analysis/analysis/vcftools_fst")
 
-windowed_fst <- read.table("lemon_war_fst.windowed.weir.fst.edit", sep="\t", header=TRUE)
+windowed_fst <- read.table("lemon_war.windowed.weir.fst.edit", sep="\t", header=TRUE)
 str(windowed_fst)
 
 quantile(windowed_fst$WEIGHTED_FST, probs = c(.95, .99, .999))
 ```
 
-Choose the quantile threshold above which SNPs will be classified as outliers.
+> :heavy_check_mark: **Output** <br>
+> &emsp;
+>       95%       99%     99.9%<br>
+> 0.1948850 0.3501600 0.5741306<br>
+
+
+Choose the quantile threshold above which SNPs will be classified as outliers. Below, we chose 99% (i.e. the top 1% of SNP windows).
 
 ```
 pdf("fst_starlings_windowed.pdf", width=10, height=5)
@@ -374,6 +399,8 @@ geom_point() +
 theme_classic() +
 geom_hline(yintercept=0.35, linetype="dashed", color = "red")
 dev.off()
+
+q()
 ```
 
 <img src="/images/Fst_Windowed.PNG" alt="Windowed Fst" width="600"/>
@@ -382,23 +409,24 @@ Finally, we will generate a list of outier SNP IDs. We do this by grabbing all o
 
 ```
 cd $DIR/analysis/vcftools_fst
-cat lemon_war_fst.windowed.weir.fst.edit | awk '$5>0.35' > lemon_war_fst.windowed.outliers
-wc -l lemon_war_fst.windowed.outliers
+cat lemon_war.windowed.weir.fst.edit | awk '$5>0.3501600' > lemon_war.windowed.outliers
+wc -l lemon_war.windowed.outliers
 ```
 > :heavy_check_mark: **Output** <br>
 > &emsp;
-> 112 lemon_war_fst.windowed.outliers
+> 107 lemon_war_fst.windowed.outliers
 
 ```
-cat lemon_war_fst.windowed.weir.fst.edit | awk '$5>0.35 ' | cut -f1-3 > lemon_war_fst.windowed.outliers.bed 
-vcftools --vcf $VCF --bed lemon_war_fst.windowed.outliers.bed --out fst_outliers --recode
-grep -v "#" fst_outliers.recode.vcf | awk '{print $3}' > vcftools_fst.outlierSNPIDs.txt
+cut -f1-3 lemon_war.windowed.outliers > lemon_war.windowed.outliers.bed 
+vcftools --vcf $VCF --bed lemon_war.windowed.outliers.bed --out fst_outliers --recode
+grep -v "#" fst_outliers.recode.vcf | awk '{print $3}' > vcftoolsfst_outlierSNPIDs.txt
+wc -l vcftoolsfst_outlierSNPIDs.txt
 ```
 > :heavy_check_mark: **Output** <br>
 > &emsp;
-> After filtering, kept 63 out of a possible 5007 Sites
+> 61
 
-We have a total of 63 outlier SNPs locate across 112 outlier SNP windows.
+We have a total of 61 outlier SNPs locate across 107 outlier SNP windows.
 
 
 ## Bayescan
