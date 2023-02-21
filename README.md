@@ -1,6 +1,6 @@
 # Outlier Analysis Workshop
 
-There are lots of interesting patterns that you can extract from genetic marker data. This can include patterns of linkage, balancing selection, or even inbreeding signals. One of the most common ones is to try find sites on the genome that are under divergent selection. The following vignette will take you through the basics of genetic selection analysis. 
+There are lots of interesting patterns that you can extract from genetic variant data. This can include patterns of linkage, balancing selection, or even inbreeding signals. One of the most common ones is to try find sites on the genome that are under selection. The following vignette will take you through the basics of genetic selection analysis. 
 
 The project has been funded by <a href="https://ausevo.com/ECR_grants_2022/">the AES ERC Networking Grant Scheme</a> and <a href="https://genetics.org.au/">GSA</a>.
 
@@ -25,15 +25,9 @@ The project has been funded by <a href="https://ausevo.com/ECR_grants_2022/">the
   2:00pm Afternoon tea<br>
   2:15pm Compiling results, group discussiona and metanalysis contribution  
 
-<h2>A <i>fairly</i> brief introduction to Genetic Outlier and Association Analysis</h2>
+<h2>A brief introduction to Genetic Outlier and Association Analysis</h2>
 
-When we look through a genome to try find loci that are under divergent selection, we often conduct what is called outlier or association analyses. **Outlier analysis** requires just knowledge of the genetics of your samples (plus sample metadata, for example population groupings), and tries to find loci that behave very differently from the underlying patterns across the genome (with the assumption being that the rest of the genome represents patterns of neutral genetic diveristy)<sup>A</sup>. Meanwhile **association analysis** require some sort of covariate data, and tests whether there are any genetic variants statistically associated with this new data (you may have heard the term [GWAS](https://www.genome.gov/genetics-glossary/Genome-Wide-Association-Studies)). This data can come in the form of phenotype data (e.g. morphology, disease status, physiology measures), or could be spatial (e.g. environmental, climate). Association tests look for sites in the genome where the precense or absence of a variant is highly correlated with the values in the co-variate data, usually through some regression type analysis.
-
-<sup>A</sup> it is very important then to account for any population substructure.
-
-> :round_pushpin: **An important note about additive genetic variance**
->
-> It is important to bear in mind how the input genetic data for outlier or association models is being interreted by the model. When dealing with many of these models (and input genotype files) the assumption is that the SNP effects are [additive](https://link.springer.com/referenceworkentry/10.1007/978-3-319-47829-6_5-1). This can be seen from, for example, the way we encode homozygous reference allele, heterozygous, and homozygous alternate allele as "0", "1", and "2" respectively in a BayPass input genofile. For the diploid organism (with two variant copies for each allele) one copy of a variant (i.e. heterozygous) is assumed to have half the effect of having two copies. However, what if the locus in question has dominance effects? This would mean the heterozygous form behaves the same as the homozygous dominant form, and it would be more appropriate to label these instead as "0", "0", "1". But with thousands, if not millions of (most likely) completely unknown variants in a dataset, how can we possibly know? The answer is we cannot. And most models will assume additive effects, because this the simplest assumption. However, by not factoring in dominance effects we could possible be missing many important functional variants, as Reynolds et al. [2021](https://www.nature.com/articles/s41588-021-00872-5) demonstrates. Genomics is full of caveats and pitfalls, which while providing new directions to explore can be a bit overwhelming. Remember, you selection analysis doesn't have to be exhaustive, just make sure it is as fit for purpose within your study design. There is so much going on in just one genome, there is no way you can analyse everything in one go. 
+When we look through a genome to try find loci that are under divergent selection, we often conduct what is called outlier or association analyses. **Outlier analysis** requires just knowledge of the genetics of your samples (plus sample metadata, for example population groupings), and tries to find loci that behave very differently from the underlying patterns across the genome (with the assumption being that the rest of the genome represents patterns of neutral genetic diveristy)<sup>A</sup>. Meanwhile **association analysis** require some sort of covariate data, and tests whether there are any genetic variants statistically associated with this new data (you may have heard the term [GWAS](https://www.genome.gov/genetics-glossary/Genome-Wide-Association-Studies)). This covariate data can come in the form of phenotype data (e.g. morphology, disease status, physiology measures), or could be spatial (e.g. environmental, climate). Association tests look for sites in the genome where the precense or absence of a variant is highly correlated with the values in the co-variate data, usually through some regression type analysis.
 
 Throughout this vignette I will refer to outlier and association analysis collectively as selection analysis. There are a lot of programs that exist currently. You can find a very long (though not exhaustive) list of them [here](https://bioinformaticshome.com/tools/gwas/gwas.html). 
 
@@ -49,28 +43,16 @@ Next we will conduct some more advanced outlier analysis:
 <li><a href="GBIF"><b>Baypass</b></a>, a program that elaborates on the bayenv model (another popular association analysis program).</li>
 </ul>
 
-<sup>B</sup> I will say population for simplicity throughout this vignette. However, equally we can test for differences between sample sites, subpopulations, and other types of groupings. What counts as one 'group' of organisms will be dependent on your study system or study question.
-
 We'll cover the pre-processing of program specific input files, how to run the programs, how to visualise the output and also in some cases we'll need to take extra steps to map the genetic markers of interest back to the SNP data.  
 
-> :round_pushpin: **An important note about reduced representation verses whole genome sequencing**
+> :beginner: **Reduced representation verses whole genome sequencing**
 >
 > Completing outlier analysis is possible and often done on reduced representation data. It is important to remember how your genome coverage (the number of genome variant sites / the genome length <sup>C</sup>) will affect your results and interpretation. Often with WGS data, you will see well resolved 'peaks' with a fairly smooth curve of points leading up to it either side. From this we often infer that the highest point is the genetic variant of interest, and the other sites either side of that exhibit signals of selection because they reside close to, and thus are linked, to the variant of interest. However, consider that even in WGS data, unless we have every single genetic variant represented (which may not be the case, depending on our variant calling and filtering parameters) it is possible that the genetic variant of interest that we have identified is not the main one, but is simply another neighbouring linked SNP to one that is not represented in the data. This problem becomes even more relevant with reduced representation sequencing (RRS), for which the genome coverage may be extremely patchy<sup>C</sup>. Thus with all outlier analysis, but especially so for those using RRS data, remember that your flagged outliers are not exhaustive, and may themselves only be liked to the variant that is truely under selection.
 
-<sup>C</sup> You may also want to consider linkage blocks.
-
-
-https://onlinelibrary.wiley.com/doi/10.1111/mec.14549
-
-https://pubmed.ncbi.nlm.nih.gov/29486732/
-
- https://onlinelibrary.wiley.com/doi/full/10.1002/ece3.9176
+ 
+Some inspiration outlier analysis plot examples, and link to paper: 
 
 ![ScreenShot](https://els-jbs-prod-cdn.jbs.elsevierhealth.com/cms/asset/4be56b5b-8593-4116-ab9a-ec7b9e3c9a05/gr1.jpg)
-
-also include  an hour of group discussion on one of the days about research question framing + grant integration
-
-
 
 
 
@@ -516,6 +498,28 @@ java -Xmx1024m -Xms512m -jar $DIR/programs/PGDSpider_2.1.1.5/PGDSpider2-cli.jar 
 
 java -Xmx1024m -Xms512m -jar $DIR/programs/PGDSpider_2.1.1.5/PGDSpider2-cli.jar -inputfile starling_3populations.pgd -inputformat PGD -outputfile starling_3populations.bs -outputformat GESTE_BAYE_SCAN
 ```
+Let's have a quick look at what the input file looks like:
+
+```
+head starling_3populations.bs
+```
+
+> :heavy_check_mark: **Output** <br>
+> [loci]=5007 <br>
+> 
+> [populations]=3 <br>
+> 
+> [pop]=1 <br>
+> 1      12      2       9 3 <br>
+> 2      20      2       11 9 <br>
+> 3      18      2       15 3 <br>
+> 4      20      2       0 20 <br>
+> 5      22      2       2 20 <br>
+
+So for each population we have a note of how many REF and ALT alleles we have at each genomic variant position.
+
+> :beginner: **An important note about additive genetic variance**: It is important to bear in mind how the input genetic data for outlier or association models is being interpreted by the model. When dealing with many of these models (and input genotype files) the assumption is that the SNP effects are [additive](https://link.springer.com/referenceworkentry/10.1007/978-3-319-47829-6_5-1). This can be seen from, for example, the way we encode homozygous reference allele, heterozygous, and homozygous alternate allele as "0", "1", and "2" respectively in a BayPass input genofile. For the diploid organism (with two variant copies for each allele) one copy of a variant (i.e. heterozygous) is assumed to have half the effect of having two copies. However, what if the locus in question has dominance effects? This would mean the heterozygous form behaves the same as the homozygous dominant form, and it would be more appropriate to label these instead as "0", "0", "1". But with thousands, if not millions of (most likely) completely unknown variants in a dataset, how can we possibly know? The answer is we cannot. And most models will assume additive effects, because this the simplest assumption. However, by not factoring in dominance effects we could possible be missing many important functional variants, as Reynolds et al. [2021](https://www.nature.com/articles/s41588-021-00872-5) demonstrates. Genomics is full of caveats and pitfalls, which while providing new directions to explore can be a bit overwhelming. Remember, you selection analysis doesn't have to be exhaustive, just make sure it is as fit for purpose within your study design. There is so much going on in just one genome, there is no way you can analyse everything in one go. 
+
 
 Now let's set Bayescan to run.
 
@@ -830,16 +834,26 @@ dev.off()
 
 **THIS IS JUST A DUMMY UPSET PLOT** <p>
 
-
 <img src="/images/All_outliers_upsetplot.PNG" alt="upset plot of outlier overlaps" width="500"/>
 
+Some comments on the proper overlap results :) <p>
 
-Some comments on the proper overlap results :)
+And if you want to get really fancy you may event want to plot your variants at their locationa round your genome in a <a href="https://github.com/katarinastuart/Sv3_StarlingGenome">circle plot</a>!
 
+## Workshop End discussion
+  
+A brief period of group discussion on one of the days about research question framing + grant integration
+  
 ## Outlier Analysis Metanalysis
 
-Flow diagram.
+This workshop was concieved as part of a larger project. The goal is to compile as many genomics data set with identified outliers as possible. While identifying outliers is an interesting and often necessary component of singular genomics projects, there is also a lot to be gained from looking at patterns across neutral versus outlier genetic variants across many different projects and taxa. <p>
 
+Hence one of the goals of this project is to compile a collection of genetic data sets information. Most of these will come from prepublished work, but atendees of this workshop may opt in their data sets should they want to have their data invovled in this project. If you are considering this, please refer to the below discision tree to see if you can include your data.
+
+**Ideally for the metanalysis we'd need:**<br>
+VCF file with all genetic variants (SNPS) <br>
+List of which variants are outliers, and what type of outliers these are <br>
+OPTIONAL but PREFERED: Reference genome that has been annotated and well scaffolded <br>
 
 
 ## Funding 
@@ -849,9 +863,9 @@ Flow diagram.
 
 </p>
 
-Thank you to the <a href="https://ausevo.com/ECR_grants_2022/">AES ERC Networking Grant Scheme</a> for funding this project.
+Thank you to the <a href="https://ausevo.com/ECR_grants_2022/">AES ERC Networking Grant Scheme</a> and <a href="https://genetics.org.au/">GSA</a> for funding this project.
 
-## Project Contributors
-
-https://www.dataschool.io/how-to-contribute-on-github/
-
+## Footnotes
+<sup>A</sup> it is very important then to account for any population substructure. There are many different ways to approach this: refer to introduction slides for some guidance.<br>
+<sup>B</sup> I will say population for simplicity throughout this vignette. However, equally we can test for differences between sample sites, subpopulations, and other types of groupings. What counts as one 'group' of organisms will be dependent on your study system or study question. <br>
+<sup>C</sup> You may also want to consider linkage blocks.
