@@ -2,7 +2,28 @@
 
 There are lots of interesting patterns that you can extract from genetic marker data. This can include patterns of linkage, balancing selection, or even inbreeding signals. One of the most common ones is to try find sites on the genome that are under divergent selection. The following vignette will take you through the basics of genetic selection analysis. 
 
-The project has been funded by the <a href="https://ausevo.com/ECR_grants_2022/">AES ERC Networking Grant Scheme</a>.
+The project has been funded by <a href="https://ausevo.com/ECR_grants_2022/">the AES ERC Networking Grant Scheme</a> and <a href="https://genetics.org.au/">GSA</a>.
+
+<h2>Schedule</h2>
+
+**Day 1**<br>
+  9:00am Introduction Slides<br>
+  9:30am Download data<br>
+  10:00am Morning Tea<br>
+  10:15am PCAdapt<br>
+  12:00pm Lunch<br>
+  1:00pm VCFtools<br>
+  2:00 Afternoon tea<br>
+  2:15pm VCFtool continued and setup for Bayescan and Baypass<br>
+  
+**Day 2**<br>
+  9:00am Bayscan<br>
+  10:00am Morning Tea<br>
+  10:15am Bayescan continued & Bayepass<br>
+  12:00pm Lunch <br>
+  1:00pm Baypass<br>
+  2:00pm Afternoon tea<br>
+  2:15pm Compiling results, group discussiona and metanalysis contribution  
 
 <h2>A <i>fairly</i> brief introduction to Genetic Outlier and Association Analysis</h2>
 
@@ -723,7 +744,7 @@ g_baypass -npop 3 -gfile starling_3populations_baypass.txt -efile baypass_enviro
 ```
 
 
-Plotting the outliers.
+Next we plot the outliers. We are chosing a <a href="https://www.statology.org/bayes-factor/">BF threshold</a> of 20 dB, which indicates "Strong evidence for alternative hypothesis".
 
 ```
 module load R/3.6.3
@@ -747,7 +768,7 @@ dev.off()
 
 <img src="/images/Baypass.PNG" alt="Baypass output" width="500"/>
 
-Finally, lets generate the list of phenotype-associated SNP IDs.
+Finally, lets generate the list of phenotype-associated SNP IDs. 
 
 ```
 cat starling_3populations_baypass_enviro_summary_betai.out | awk '$6>20' > starling_3populations_baypass_enviro_BF20.txt
@@ -770,9 +791,50 @@ comm -12 <(sort starling_3populations_baypass_enviro_BF20_SNPlist.txt) <(sort ba
 > &emsp;
 > 38
 
-## COmparing Outlier Overlap
+## Comparing Outlier Overlap
 
-Make an upset plot to compare the outliers.
+Now we wil make an upset plot to compare the overlap of outliers detected over our different methods.
+
+KATNOTE: fix names of last 3 files to match first 2 naming scheme (i.e. tool_outlierSNPIDs.txt)
+
+```
+cd $DIR/outlier_analysis/summary
+cp $DIR/outlier_analysis/pcadapt/pcadapt_outlierSNPIDs.txt .
+cp $DIR/outlier_analysis/pcadapt/vcftoolsfst_outlierSNPIDs.txt .
+cp $DIR/outlier_analysis/pcadapt/bayscan_outliers_SNPs.txt .
+cp $DIR/outlier_analysis/pcadapt/baypass_outliers_SNPlist.txt .
+cp $DIR/outlier_analysis/pcadapt/starling_3populations_baypass_enviro_BF20_SNPlist.txt .
+```
+
+Now we have a copy of all the SNP IDs for each of out outlier analysis, let's use the R package <a href="https://cran.r-project.org/web/packages/UpSetR/vignettes/basic.usage.html">UpSetR</a> to plot the overlap.
+
+```
+module load R/4.1.0-gimkl-2020a
+R
+setwd("/nesi/noackup/uoa02613/...")
+pcadapt<-scan("pcadapt_outlierSNPIDs.txt", what = "", quiet=TRUE)
+vcftools<-scan("vcftoolsfst_outlierSNPIDs.txt", what = "", quiet=TRUE)
+bayescan<-scan("bayscan_outliers_SNPs.txt", what = "", quiet=TRUE)
+baypass<-scan("baypass_outliers_SNPlist.txt", what = "", quiet=TRUE)
+baypass_env<-scan("starling_3populations_baypass_enviro_BF20_SNPlist.txt", what = "", quiet=TRUE)  #total transcripts
+
+all_outliers <- list(PCAdapt = pcadapt, VCFtools = vcftools, Bayescan = bayescan, Baypass = baypass, BaypassEnv = baypass_env)
+
+#install.packages("UpSetR")
+library(UpSetR)
+
+pdf("All_outliers_upsetplot.pdf")
+upset(fromList(all_outliers), order.by = "freq", empty.intersections = "on", point.size = 3.5, line.size = 2, mainbar.y.label = "Outlier Count", sets.x.label = "Total Outliers", text.scale = c(1.3, 1.3, 1, 1, 2, 1.3), number.angles = 30 ) 
+dev.off() 
+```
+
+**THIS IS JUST A DUMMY UPSET PLOT** <p>
+
+
+<img src="/images/All_outliers_upsetplot.PNG" alt="upset plot of outlier overlaps" width="500"/>
+
+
+Some comments on the proper overlap results :)
 
 ## Outlier Analysis Metanalysis
 
