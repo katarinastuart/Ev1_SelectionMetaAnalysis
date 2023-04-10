@@ -53,15 +53,15 @@ We'll cover the pre-processing of program specific input files, how to run the p
 Some inspiration outlier analysis plot examples, and link to paper: 
 
 ![ScreenShot](https://els-jbs-prod-cdn.jbs.elsevierhealth.com/cms/asset/4be56b5b-8593-4116-ab9a-ec7b9e3c9a05/gr1.jpg)
-
+[EDIT - REPLACE]
 
 
 
 ## Define you working directory for this project, and the VCF file location:
 
 ```
-mkdir ~/outlier_analysis
-DIR=~/outlier_analysis
+mkdir /nesi/nobackup/uoa02613/kstuart_projects/outlier_analysis
+DIR=/nesi/nobackup/uoa02613/kstuart_projects/outlier_analysis
 cd $DIR
 ```
 
@@ -110,9 +110,9 @@ Across this workshop, we will need the genetic data to be in several different f
 
 ```
 cd $DIR/data
-module load vcftools/0.1.16
-module load plink/1.90b6.7 
-vcftools --vcf $VCF --out starling_3populations.plink --plink
+module load VCFtools/0.1.15-GCC-9.2.0-Perl-5.30.1
+module load PLINK/1.09b6.16 
+vcftools --vcf $VCF --plink --out starling_3populations.plink
 plink --file starling_3populations.plink --make-bed --noweb --out starling_3populations
 ```
 
@@ -127,19 +127,19 @@ Brief summary of PCAdapt. [FIX]
 Install PCAdapt and set your working directory.
 
 ```
-module load R/3.5.3
+module load R/4.1.0-gimkl-2020a
 R
 
 install.packages("pcadapt")
-library(pcadapt)
+library("pcadapt")
 
-setwd("/home/z5188231/outlier_analysis/analysis/pcadapt/")
+setwd("/nesi/nobackup/uoa02613/kstuart_projects/outlier_analysis/analysis/pcadapt/")
 ```
 
 Now let's load in the data - PCAdapt uses bed file types.
 
 ```
-starling_bed <- "/home/z5188231/outlier_analysis/data/starling_3populations.bed"
+starling_bed <- "/nesi/nobackup/uoa02613/kstuart_projects/outlier_analysis/data/starling_3populations.bed"
 starlings_pcadapt <- read.pcadapt(starling_bed, type = "bed")
 ```
 
@@ -279,10 +279,10 @@ awk 'FNR==NR{a[$1];next} (($4) in a)' starlings_pcadapt_outliers_numbers.txt ../
 head pcadapt_outlierSNPIDs.txt
 ```
 > :heavy_check_mark: **Output** <br>
-> &emsp;
-> 230955:72:-
-> 238881:46:+
-> 286527:46:-
+> &emsp; <br>
+> 230955:72:- <br>
+> 238881:46:+ <br>
+> 286527:46:- <br>
 
 
 
