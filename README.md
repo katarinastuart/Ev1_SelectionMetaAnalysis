@@ -295,7 +295,7 @@ Fst outliers will allow us to identify SNPs that behave abnormally in pairwise c
 The first things we need to do is use our metadata file (currently defined by the environmental variable ``METADATA``) to make three individual files containing just the list of individuals in each of the populations. We can do this by subseting our sample metadata file, using the command ``grep`` to grab lines that match each population's name, and then using ``awk`` to keep only the first column of metadta, i.e. the sample names.
 
 ```
-module load vcftools/0.1.16
+module load VCFtools/0.1.15-GCC-9.2.0-Perl-5.30.1
 ```
 
 ```
@@ -379,7 +379,7 @@ R
 
 library("ggplot2")
 
-setwd("/home/z5188231/outlier_analysis/analysis/vcftools_fst")
+setwd("/nesi/nobackup/uoa02613/kstuart_projects/outlier_analysis/analysis/vcftools_fst")
 
 windowed_fst <- read.table("lemon_war.windowed.weir.fst.edit", sep="\t", header=TRUE)
 str(windowed_fst)
@@ -443,6 +443,19 @@ First, we will need to convert out VCF to the Bayescan format. To do this we wil
 ```
 cd $DIR/programs
 wget http://www.cmpg.unibe.ch/software/PGDSpider/PGDSpider_2.1.1.5.zip
+unzip *.zip
+```
+We also need to create a new populations metadata file, which contains individual names in column 1, and population names in column 2.
+
+```
+cd $DIR/data
+cut -f1,2 $METADATA > starling_3populations_metadata_INDPOP.txt
+```
+
+Now navigate to the folder in which we will be running the bayescan analysis.
+
+```
+cd $DIR/analysis/bayescan
 ```
 
 We now run PGDSpider in two steps: first we convert the VCF file to the PGD format, second from PGD format to Bayescan format. To do this we will need to create a SPID file. create a file called *VCF_PGD.spid* using the ``nano`` command. Paste in the below, replacing the location of you metadata file.
@@ -455,7 +468,7 @@ include snapshot of SPID:
 > \# Only output SNPs with a phred-scaled quality of at least: <br>
 > VCF_PARSER_QUAL_QUESTION= <br>
 > \# Select population definition file: <br>
-> VCF_PARSER_POP_FILE_QUESTION=/srv/scratch/z5188231/KStuart.Starling-Aug18/Ev1_SelectionMetaAnalysis/data/3pops_pops.txt <br>
+> VCF_PARSER_POP_FILE_QUESTION=/nesi/nobackup/uoa02613/kstuart_projects/outlier_analysis/data/starling_3populations_metadata_INDPOP.txt <br>
 > \# What is the ploidy of the data? <br>
 > VCF_PARSER_PLOIDY_QUESTION=DIPLOID <br>
 > \# Do you want to include a file with population definitions? <br>
@@ -479,20 +492,12 @@ include snapshot of SPID:
 > WRITER_FORMAT=PGD <br>
 
 
-```
-head FILE
-```
-
-
->  au05_men        SOUTH <br>
->  au06_men        SOUTH
-
-
 
 Now run the two step convserion.
 
 ```
-cd $DIR/analysis/bayescan
+module purge
+module load Java/1.8.0_144
 
 java -Xmx1024m -Xms512m -jar $DIR/programs/PGDSpider_2.1.1.5/PGDSpider2-cli.jar -inputfile $VCF -inputformat VCF -outputfile starling_3populations.pgd -outputformat  PGD -spid VCF_PGD.spid 
 
@@ -521,24 +526,29 @@ So for each population we have a note of how many REF and ALT alleles we have at
 > :beginner: **An important note about additive genetic variance**: It is important to bear in mind how the input genetic data for outlier or association models is being interpreted by the model. When dealing with many of these models (and input genotype files) the assumption is that the SNP effects are [additive](https://link.springer.com/referenceworkentry/10.1007/978-3-319-47829-6_5-1). This can be seen from, for example, the way we encode homozygous reference allele, heterozygous, and homozygous alternate allele as "0", "1", and "2" respectively in a BayPass input genofile. For the diploid organism (with two variant copies for each allele) one copy of a variant (i.e. heterozygous) is assumed to have half the effect of having two copies. However, what if the locus in question has dominance effects? This would mean the heterozygous form behaves the same as the homozygous dominant form, and it would be more appropriate to label these instead as "0", "0", "1". But with thousands, if not millions of (most likely) completely unknown variants in a dataset, how can we possibly know? The answer is we cannot. And most models will assume additive effects, because this the simplest assumption. However, by not factoring in dominance effects we could possible be missing many important functional variants, as Reynolds et al. [2021](https://www.nature.com/articles/s41588-021-00872-5) demonstrates. Genomics is full of caveats and pitfalls, which while providing new directions to explore can be a bit overwhelming. Remember, you selection analysis doesn't have to be exhaustive, just make sure it is as fit for purpose within your study design. There is so much going on in just one genome, there is no way you can analyse everything in one go. 
 
 
-Now let's set Bayescan to run.
+Now let's set Bayescan to run. Using the ``nano bayescan_starling.sl`` we will create a slurm script and submit it to run using the command ``sbatch bayescan_starling.sl``. This should take approximately 1-2 hrs to run.
 
 ```
-#!/bin/bash
-#PBS -N 2021-11-21.bayescan_starling.pbs
-#PBS -V
-#PBS -l nodes=1:ppn=16
-#PBS -l mem=40gb
-#PBS -l walltime=12:00:00
-#PBS -j oe
-#PBS -M katarina.stuart@unsw.edu.au
-#PBS -m ae
+#!/bin/bash -e
+#SBATCH --job-name=2023_04_14.bayescan_starling.sl
+#SBATCH --account=uoa02613
+#SBATCH --time=00-12:00:00
+#SBATCH --mem=5GB
+#SBATCH --output=%x_%j.errout
+#SBATCH --mail-user=katarina.stuart@auckland.ac.nz
+#SBATCH --mail-type=ALL
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=8
+#SBATCH --profile task
 
-module load bayescan/2.1
+cd /nesi/nobackup/uoa02613/kstuart_projects/outlier_analysis/analysis/bayescan
 
-cd /srv/scratch/z5188231/KStuart.Starling-Aug18/Ev1_SelectionMetaAnalysis/analysis/bayescan
+#load bayescan
+module load BayeScan/2.1-GCCcore-7.4.0
 
-bayescan_2.1 ./starling_3populations.bs -od ./ -threads 16 -n 5000 -thin 10 -nbp 20 -pilot 5000 -burn 50000 -pr_odds 10
+#run bayescan. Currently everything is set to default, but read the manual if you want to understand what they mean and how to refine them if needed.
+bayescan_2.1 ./starling_3populations.bs -od ./ -threads 8 -n 5000 -thin 10 -nbp 20 -pilot 5000 -burn 50000 -pr_odds 10
 ```
  
 Identify outliers:
