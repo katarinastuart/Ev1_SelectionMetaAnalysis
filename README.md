@@ -17,7 +17,7 @@ The project has been funded by <a href="https://ausevo.com/ECR_grants_2022/">the
   2:15pm VCFtool continued and setup for Bayescan and Baypass<br>
   
 **Day 2**<br>
-  9:00am Bayscan<br>
+  9:00am Bayescan<br>
   10:00am Morning Tea<br>
   10:15am Bayescan continued & Bayepass<br>
   12:00pm Lunch <br>
@@ -50,10 +50,7 @@ We'll cover the pre-processing of program specific input files, how to run the p
 > Completing outlier analysis is possible and often done on reduced representation data. It is important to remember how your genome coverage (the number of genome variant sites / the genome length <sup>C</sup>) will affect your results and interpretation. Often with WGS data, you will see well resolved 'peaks' with a fairly smooth curve of points leading up to it either side. From this we often infer that the highest point is the genetic variant of interest, and the other sites either side of that exhibit signals of selection because they reside close to, and thus are linked, to the variant of interest. However, consider that even in WGS data, unless we have every single genetic variant represented (which may not be the case, depending on our variant calling and filtering parameters) it is possible that the genetic variant of interest that we have identified is not the main one, but is simply another neighbouring linked SNP to one that is not represented in the data. This problem becomes even more relevant with reduced representation sequencing (RRS), for which the genome coverage may be extremely patchy<sup>C</sup>. Thus with all outlier analysis, but especially so for those using RRS data, remember that your flagged outliers are not exhaustive, and may themselves only be liked to the variant that is truely under selection.
 
  
-Some inspiration outlier analysis plot examples, and link to paper: 
-
 ![ScreenShot](https://els-jbs-prod-cdn.jbs.elsevierhealth.com/cms/asset/4be56b5b-8593-4116-ab9a-ec7b9e3c9a05/gr1.jpg)
-[EDIT - REPLACE]
 
 
 
@@ -120,11 +117,12 @@ plink --file starling_3populations.plink --make-bed --noweb --out starling_3popu
 
 ## PCAdapt
 
-The PCAdapt manual is available [here](https://bcm-uga.github.io/pcadapt/articles/pcadapt.html).
+PCAdapt uses an ordinatio approach to find sites in a data set that are outliers with respect to background population structure. The PCAdapt manual is available [here](https://bcm-uga.github.io/pcadapt/articles/pcadapt.html). 
 
-Brief summary of PCAdapt. [FIX]
+CITE: Privé, F., Luu, K., Vilhjálmsson, B. J., & Blum, M. G.B. (2020). Performing highly efficient genome scans for local adaptation with R package pcadapt version 4. Molecular Biology and Evolution.
 
-Install PCAdapt and set your working directory.
+
+First, let's install PCAdapt and set your working directory.
 
 ```
 module load R/4.1.0-gimkl-2020a
@@ -290,6 +288,8 @@ head pcadapt_outlierSNPIDs.txt
 
 The VCFTools manual is available [here](https://vcftools.sourceforge.net/man_latest.html).
 
+CITE: Danecek P, Auton A, Abecasis G, Albers CA, Banks E, DePristo MA, Handsaker RE, Lunter G, Marth GT, Sherry ST et al. 2011 The variant call format and VCFtools. Bioinformatics 27 2156–2158. (doi:10.1093/bioinformatics/btr330)
+
 Fst outliers will allow us to identify SNPs that behave abnormally in pairwise comparisons between populations.
 
 The first things we need to do is use our metadata file (currently defined by the environmental variable ``METADATA``) to make three individual files containing just the list of individuals in each of the populations. We can do this by subseting our sample metadata file, using the command ``grep`` to grab lines that match each population's name, and then using ``awk`` to keep only the first column of metadta, i.e. the sample names.
@@ -436,6 +436,8 @@ We have a total of 61 outlier SNPs locate across 107 outlier SNP windows.
 
 The VCFTools manual is available [here](https://github.com/mfoll/BayeScan).
 
+CITE: Foll M & Gaggiotti O 2008 A Genome-Scan Method to Identify Selected Loci Appropriate for Both Dominant and Codominant Markers: A Bayesian Perspective. Genetics 180 977–993. (doi:10.1534/genetics.108.092221)
+
 Bayescan identified outlier SNPs based on allele frequencies. More explination about alpha and such.
 
 First, we will need to convert out VCF to the Bayescan format. To do this we will use the genetic file conversion program called [PGDspider](http://www.cmpg.unibe.ch/software/PGDSpider/). 
@@ -561,7 +563,7 @@ setwd("/nesi/nobackup/uoa02613/kstuart_projects/outlier_analysis/analysis/bayesc
 source("/opt/nesi/CS400_centos7_bdw/BayeScan/2.1-GCCcore-7.4.0/R\ functions/plot_R.r")
 outliers.bayescan=plot_bayescan("starling_3population_fst.txt",FDR=0.05)
 outliers.bayescan
-write.table(outliers.bayescan, file="bayscan_outliers.txt")
+write.table(outliers.bayescan, file="bayescan_outliers.txt")
 
 q()
 ```
@@ -583,13 +585,13 @@ Create list of SNPs in VCF, assign line numbers that can be used to find matchin
 ```
 grep -v "^#" ../../data/starling_3populations.recode.vcf  | cut -f1-3 | awk '{print $0"\t"NR}' > starling_3populations_SNPs.txt
 
-awk '{print $2}' bayscan_outliers.txt > bayscan_outliers_numbers.txt
+awk '{print $2}' bayescan_outliers.txt > bayescan_outliers_numbers.txt
 ```
 
 list of outlier SNPS, by matching column 1 of of the outliers list to the fourth column of the whole SNP list data.
 
 ```
-awk 'FNR==NR{a[$1];next} (($4) in a)' bayscan_outliers_numbers.txt starling_3populations_SNPs.txt   | cut -f3 > bayscan_outlierSNPIDs.txt
+awk 'FNR==NR{a[$1];next} (($4) in a)' bayescan_outliers_numbers.txt starling_3populations_SNPs.txt   | cut -f3 > bayescan_outlierSNPIDs.txt
 ```
 
 Bayescane Log Plot, colouring the outliers in a different colour.
@@ -603,7 +605,7 @@ setwd("/nesi/nobackup/uoa02613/kstuart_projects/outlier_analysis/analysis/bayesc
 
 bayescan.out<- read.table("starling_3population_fst.txt", header=TRUE)
 bayescan.out <- bayescan.out %>% mutate(ID = row_number())
-bayescan.outiers<- read.table("bayscan_outliers_numbers.txt", header=FALSE)
+bayescan.outiers<- read.table("bayescan_outliers_numbers.txt", header=FALSE)
 outliers.plot <- filter(bayescan.out, ID %in% bayescan.outiers[["V1"]])
 
 png("bayescan_outliers.png", width=600, height=350)
@@ -619,6 +621,8 @@ q()
 ## BayPass
 
 The Baypass manual can be found [here](http://www1.montpellier.inra.fr/CBGP/software/baypass/files/BayPass_manual_2.31.pdf).
+
+CITE: Gautier M 2015 Genome-Wide Scan for Adaptive Divergence and Association with Population-Specific Covariates. Genetics 201 1555–1579. (doi:10.1534/genetics.115.181453)
 
 Baypass requires that the allele frequency data be on a population, not an individual basis. The genotyping data file is simply organized as a matrix with nsnp rows and 2 ∗ npop columns. The row field separator is a space. More precisely, each row corresponds to one marker and the number of columns is twice the number of populations because each pair of numbers corresponds to each allele (or read counts for PoolSeq experiment) counts in one population. 
 
@@ -866,13 +870,11 @@ wc -l double_outliers.txt
 
 Now we wil make an upset plot to compare the overlap of outliers detected over our different methods.
 
-KATNOTE: fix names of last 3 files to match first 2 naming scheme (i.e. tool_outlierSNPIDs.txt)
-
 ```
 cd $DIR/analysis/summary
 ln -s $DIR/analysis/pcadapt/pcadapt_outlierSNPIDs.txt .
 ln -s $DIR/analysis/vcftools_fst/vcftoolsfst_outlierSNPIDs.txt .
-ln -s $DIR/analysis/bayescan/bayscan_outlierSNPIDs.txt .
+ln -s $DIR/analysis/bayescan/bayescan_outlierSNPIDs.txt .
 ln -s $DIR/analysis/baypass/baypass_outlierSNPIDs.txt .
 ln -s $DIR/analysis/baypass/baypass_wingspan_outlierSNPIDs.txt .
 ```
@@ -886,7 +888,7 @@ setwd("/nesi/nobackup/uoa02613/kstuart_projects/outlier_analysis/analysis/summar
 
 pcadapt<-scan("pcadapt_outlierSNPIDs.txt", what = "", quiet=TRUE)
 vcftools<-scan("vcftoolsfst_outlierSNPIDs.txt", what = "", quiet=TRUE)
-bayescan<-scan("bayscan_outlierSNPIDs.txt", what = "", quiet=TRUE)
+bayescan<-scan("bayescan_outlierSNPIDs.txt", what = "", quiet=TRUE)
 baypass<-scan("baypass_outlierSNPIDs.txt", what = "", quiet=TRUE)
 baypass_wing<-scan("baypass_wingspan_outlierSNPIDs.txt", what = "", quiet=TRUE)  #total transcripts
 
