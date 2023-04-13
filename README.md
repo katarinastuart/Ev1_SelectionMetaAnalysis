@@ -611,16 +611,28 @@ dev.off()
 
 The Baypass manual can be found [here](http://www1.montpellier.inra.fr/CBGP/software/baypass/files/BayPass_manual_2.31.pdf).
 
-Baypass requires that the allele frequency data be on a population, not an individual basis. The genotyping data file is simply organized as a matrix with nsnp rows and 2 ∗ npop columns. The row field separator is a space. More precisely, each row corresponds to one marker and the number of columns is twice the number of populations because each pair of numbers corresponds to each allele (or read counts for PoolSeq experiment) counts in one population. To generate this population gene count data we will work with the PLINK file.
+Baypass requires that the allele frequency data be on a population, not an individual basis. The genotyping data file is simply organized as a matrix with nsnp rows and 2 ∗ npop columns. The row field separator is a space. More precisely, each row corresponds to one marker and the number of columns is twice the number of populations because each pair of numbers corresponds to each allele (or read counts for PoolSeq experiment) counts in one population. 
+
+To generate this population gene count data we will work with the PLINK file. First we have to fix the individual ID and population labels, as PLINK has pulled these directly from the VCF which has no popuation information. What we are aiming for is population in column 1, and individual ID in column 2.
 
 ```
+cd $DIR/data
+
+awk '{print $1 $1}'cut -f2,1 $METADATA > starling_3populations_metadata_POPIND.txt
+
+cd $DIR/analysis/baypass
+
 PLINK=$DIR/data/starling_3populations.plink.ped
 
+#remove first 2 columns
 cut -f 3- $PLINK > x.delete
+
+#
+
 paste $DIR/data/3pops_plink.txt x.delete > starling_3populations.plink.ped
 rm x.delete 
-cp ../../data/starling_3populations.plink.map .
-cp ../../data/starling_3populations.plink.log .
+cp $DIR/data/starling_3populations.plink.map .
+cp $DIR/data/starling_3populations.plink.log .
 ```
 
 run the pop based allele frequency calculations
