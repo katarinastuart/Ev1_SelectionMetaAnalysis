@@ -661,11 +661,11 @@ manipulate file so it has baypass format, numbers set for plink output file and 
 tail -n +2 starling_3populations.frq.strat | awk '{ $9 = $8 - $7 } 1' | awk '{print $7,$9}' | tr "\n" " " | sed 's/ /\n/6; P; D' > starling_3populations_baypass.txt
 ```
 
-Now we can run Baypass by creating another slurm script, which should also run for about an hour.
+Now we can run Baypass by creating a slurm script ``baypass1_starling.sl``, which should run for about 5 minutes.
 
 ```
 #!/bin/bash -e
-#SBATCH --job-name=2023_04_14.baypass_starling.sl
+#SBATCH --job-name=2023_04_14.baypass1_starling.sl
 #SBATCH --account=uoa02613
 #SBATCH --time=00-12:00:00
 #SBATCH --mem=5GB
@@ -674,33 +674,45 @@ Now we can run Baypass by creating another slurm script, which should also run f
 #SBATCH --mail-type=ALL
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
-#SBATCH --cpus-per-task=16
+#SBATCH --cpus-per-task=4
 #SBATCH --profile task
 
 module load BayPass/2.31-intel-2022a
 
 cd /nesi/nobackup/uoa02613/kstuart_projects/outlier_analysis/analysis/baypass
 
-i_baypass -npop 3 -gfile ./starling_3populations_baypass.txt -outprefix starling_3populations_baypass -nthreads 16
+i_baypass -npop 3 -gfile ./starling_3populations_baypass.txt -outprefix starling_3populations_baypass -nthreads 4
 ```
 
-Running in R to make the anapod data
+Running in R to make the anapod data. First let's quickly download the utils we need.
+
+```
+cd $DIR/programs
+git clone https://github.com/andbeck/BayPass.git
+```
+Now let's generate some simulated data, based on the parameters calculated from our genetic data.
 
 ```
 module load R/4.1.0-gimkl-2020a
 R
 setwd("/nesi/nobackup/uoa02613/kstuart_projects/outlier_analysis/analysis/baypass")
-source("/apps/baypass/2.1/utils/baypass_utils.R")
+source("/nesi/nobackup/uoa02613/kstuart_projects/outlier_analysis/programs/BayPass/baypass_utils.R")
+
+install.packages("ape")
 library("ape")
+
+install.packages("corrplot")
 library("corrplot")
 
 omega=as.matrix(read.table("starling_3populations_baypass_mat_omega.out"))
 pi.beta.coef=read.table("starling_3populations_baypass_summary_beta_params.out",h=T)$Mean
 bta14.data<-geno2YN("starling_3populations_baypass.txt")
 simu.bta<-simulate.baypass(omega.mat=omega, nsnp=5000, sample.size=bta14.data$NN, beta.pi=pi.beta.coef,pi.maf=0,suffix="btapods")
+
+q()
 ```
 
-We now have the simulated geno data.
+We now have the simulated genetic data, we can find the XtX statistic threshold above which we will consider genetic sites an outlier. Let's create another script in ``cd $DIR/analysis/baypass`` called ``baypass2_starling.sl``.
 
 ```
 #!/bin/bash -e
@@ -713,23 +725,23 @@ We now have the simulated geno data.
 #SBATCH --mail-type=ALL
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
-#SBATCH --cpus-per-task=16
+#SBATCH --cpus-per-task=4
 #SBATCH --profile task
 
 module load BayPass/2.31-intel-2022a
 
 cd /nesi/nobackup/uoa02613/kstuart_projects/outlier_analysis/analysis/baypass
 
-i_baypass -npop 3 -gfile G.btapods  -outprefix G.btapods -nthreads 16 
+i_baypass -npop 3 -gfile G.btapods  -outprefix G.btapods -nthreads 4 
 ```
 
-XtX calibration; get the pod XtX theshoold
+XtX calibration; get the pod XtX theshold
 
 ```
 module load R/4.1.0-gimkl-2020a
 R
 setwd("/nesi/nobackup/uoa02613/kstuart_projects/outlier_analysis/analysis/baypass")
-source("/apps/baypass/2.1/utils/baypass_utils.R")
+source("/nesi/nobackup/uoa02613/kstuart_projects/outlier_analysis/programs/BayPass/baypass_utils.R")
 library("ape")
 library("corrplot")
 
@@ -747,20 +759,20 @@ q()
 
 > :heavy_check_mark: **Output** <br>
 > &emsp;
-> 4.73302
+> 6.258372
 
 Your values may be slightly different as the simlated data will not be identical.
 
 Next, we filter the data for the outlier snps by identifying those above the threshold.
 
 ```
-cat starling_3populations_baypass_summary_pi_xtx.out | awk '$6>4.73302 ' > baypass_outliers.txt
+cat starling_3populations_baypass_summary_pi_xtx.out | awk '$4>6.258372 ' > baypass_outliers.txt
 ```
 
 create list of SNPs in VCF, assign line numbers that can be used to find matching line numbers in outliers (SNP ID is lost in bayescan, line numbers used as signifiers).
 
 ```
-grep -v "^#" ../../data/starling_3populations.recode.vcf  | cut -f1-3 | awk '{print $0"\t"NR}' > starling_3populations_SNPs.txt
+grep -v "^#" $VCF  | cut -f1-3 | awk '{print $0"\t"NR}' > starling_3populations_SNPs.txt
 ```
 
 List of outlier SNPS
@@ -772,7 +784,7 @@ wc -l baypass_outlierSNPIDs.txt
 
 > :heavy_check_mark: **Output** <br>
 > &emsp;
-> 275
+> 38
 
 Low lets find SNPs that are statistically associated with wingspan. To do this we have to go back to the metadata and compute the average wingspan of each of out populations and place them in a file.
 
@@ -784,13 +796,15 @@ metadata <- read.table("/nesi/nobackup/uoa02613/kstuart_projects/outlier_analysi
 str(metadata)
 pop_metadata <- aggregate(V3 ~ V2, data = metadata, mean)
 write(pop_metadata[,2], "pop_mean_wingspan.txt")
+
+q()
 ```
 
 > :heavy_check_mark: **Output** <br>
 > &emsp;
 > 14.89805 19.63306 22.09655
 
-Now we can submit a third and final baypass job, which will let us know which SNPs are statistically associated with wingspan.
+Now we can submit a third and final baypass job ``baypass3_starling.sl``, which will let us know which SNPs are statistically associated with wingspan.
 
 
 ```
@@ -804,14 +818,14 @@ Now we can submit a third and final baypass job, which will let us know which SN
 #SBATCH --mail-type=ALL
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
-#SBATCH --cpus-per-task=16
+#SBATCH --cpus-per-task=4
 #SBATCH --profile task
 
 module load BayPass/2.31-intel-2022a
 
 cd /nesi/nobackup/uoa02613/kstuart_projects/outlier_analysis/analysis/baypass
 
-i_baypass -npop 3 -gfile starling_3populations_baypass.txt -efile pop_mean_wingspan.txt -scalecov -auxmodel -nthreads 16 -omegafile starling_3populations_baypass_mat_omega.out -outprefix starling_3populations_baypass_wing
+i_baypass -npop 3 -gfile starling_3populations_baypass.txt -efile pop_mean_wingspan.txt -scalecov -auxmodel -nthreads 4 -omegafile starling_3populations_baypass_mat_omega.out -outprefix starling_3populations_baypass_wing
 ```
 
 
@@ -850,7 +864,7 @@ wc -l starling_3populations_baypass_wing_BF20.txt
 
 > :heavy_check_mark: **Output** <br>
 > &emsp;
-> 40
+> 48
 
 Filtering the data sets for SNPS above BFmc threshold - these are out outlier SNPs that are associated with wingspan. 
 
@@ -864,7 +878,7 @@ wc -l double_outliers.txt
 
 > :heavy_check_mark: **Output** <br>
 > &emsp;
-> 38
+> 18
 
 ## Comparing Outlier Overlap
 
@@ -890,23 +904,21 @@ pcadapt<-scan("pcadapt_outlierSNPIDs.txt", what = "", quiet=TRUE)
 vcftools<-scan("vcftoolsfst_outlierSNPIDs.txt", what = "", quiet=TRUE)
 bayescan<-scan("bayescan_outlierSNPIDs.txt", what = "", quiet=TRUE)
 baypass<-scan("baypass_outlierSNPIDs.txt", what = "", quiet=TRUE)
-baypass_wing<-scan("baypass_wingspan_outlierSNPIDs.txt", what = "", quiet=TRUE)  #total transcripts
+baypass_wing<-scan("baypass_wingspan_outlierSNPIDs.txt", what = "", quiet=TRUE)  
 
 all_outliers <- list(PCAdapt = pcadapt, VCFtools = vcftools, Bayescan = bayescan, Baypass = baypass, BaypassWing = baypass_wing)
 
-#install.packages("UpSetR")
+install.packages("UpSetR")
 library(UpSetR)
 
 pdf("All_outliers_upsetplot.pdf")
-upset(fromList(all_outliers), order.by = "freq", empty.intersections = "on", point.size = 3.5, line.size = 2, mainbar.y.label = "Outlier Count", sets.x.label = "Total Outliers", text.scale = c(1.3, 1.3, 1, 1, 2, 1.3), number.angles = 30 ) 
+upset(fromList(all_outliers), order.by = "freq", empty.intersections = "on", point.size = 3.5, line.size = 2, mainbar.y.label = "Outlier Count", sets.x.label = "Total Outliers", text.scale = c(1.3, 1.3, 1, 1, 2, 1.3), number.angles = 30, nintersects = 11 ) 
 dev.off() 
 ```
 
-**THIS IS JUST A DUMMY UPSET PLOT** <p>
+<img src="/images/outliers_upsetplot.PNG" alt="upset plot of outlier overlaps" width="500"/>
 
-<img src="/images/All_outliers_upsetplot.PNG" alt="upset plot of outlier overlaps" width="500"/>
-
-Some comments on the proper overlap results :) <p>
+Let's have a discussion about the overlap between these five outlier groups. <p>
 
 And if you want to get really fancy you may event want to plot your variants at their location around your genome in a <a href="https://github.com/katarinastuart/Sv3_StarlingGenome">circle plot</a>!
 
