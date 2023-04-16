@@ -677,11 +677,11 @@ Now we can run Baypass by creating another slurm script, which should also run f
 #SBATCH --cpus-per-task=16
 #SBATCH --profile task
 
-module load baypass/2.3
+module load BayPass/2.31-intel-2022a
 
 cd /nesi/nobackup/uoa02613/kstuart_projects/outlier_analysis/analysis/baypass
 
-g_baypass -npop 3 -gfile ./starling_3populations_baypass.txt -outprefix starling_3populations_baypass -nthreads 16
+i_baypass -npop 3 -gfile ./starling_3populations_baypass.txt -outprefix starling_3populations_baypass -nthreads 16
 ```
 
 Running in R to make the anapod data
@@ -716,11 +716,11 @@ We now have the simulated geno data.
 #SBATCH --cpus-per-task=16
 #SBATCH --profile task
 
-module load baypass/2.3
+module load BayPass/2.31-intel-2022a
 
 cd /nesi/nobackup/uoa02613/kstuart_projects/outlier_analysis/analysis/baypass
 
-g_baypass -npop 3 -gfile G.btapods  -outprefix G.btapods -nthreads 16 
+i_baypass -npop 3 -gfile G.btapods  -outprefix G.btapods -nthreads 16 
 ```
 
 XtX calibration; get the pod XtX theshoold
@@ -807,11 +807,11 @@ Now we can submit a third and final baypass job, which will let us know which SN
 #SBATCH --cpus-per-task=16
 #SBATCH --profile task
 
-module load baypass/2.3
+module load BayPass/2.31-intel-2022a
 
 cd /nesi/nobackup/uoa02613/kstuart_projects/outlier_analysis/analysis/baypass
 
-g_baypass -npop 3 -gfile starling_3populations_baypass.txt -efile pop_mean_wingspan.txt -scalecov -auxmodel -nthreads 16 -omegafile starling_3populations_baypass_mat_omega.out -outprefix starling_3populations_baypass_wing
+i_baypass -npop 3 -gfile starling_3populations_baypass.txt -efile pop_mean_wingspan.txt -scalecov -auxmodel -nthreads 16 -omegafile starling_3populations_baypass_mat_omega.out -outprefix starling_3populations_baypass_wing
 ```
 
 
