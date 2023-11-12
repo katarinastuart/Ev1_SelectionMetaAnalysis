@@ -4,6 +4,8 @@ There are lots of interesting patterns that you can extract from genetic variant
 
 The project has been funded by <a href="https://ausevo.com/ECR_grants_2022/">the AES ERC Networking Grant Scheme</a> and <a href="https://genetics.org.au/">GSA</a>.
 
+A version of this workshop that has been adapted to run directly on New Zealand eScience Infrastructure (NeSI) is <a href="https://genomicsaotearoa.github.io/Outlier_Analysis_Workshop/">available here</a>.
+
 <h2>Schedule</h2>
 
 **Day 1**<br>
