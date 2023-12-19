@@ -59,8 +59,8 @@ We'll cover the pre-processing of program specific input files, how to run the p
 ## Define you working directory for this project, and the VCF file location:
 
 ```
-mkdir /nesi/nobackup/uoa02613/kstuart_projects/outlier_analysis
-DIR=/nesi/nobackup/uoa02613/kstuart_projects/outlier_analysis
+mkdir /home/ubuntu/outlier_analysis
+DIR=/home/ubuntu/outlier_analysis
 cd $DIR
 ```
 
