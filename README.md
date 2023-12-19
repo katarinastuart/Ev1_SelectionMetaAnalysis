@@ -90,7 +90,7 @@ The data provided in this workshop contains 5007 SNPs loci for across 39 individ
 
 There is also a metadata file, that contains the individuals unique IDs, their assigned populations, and a wingspan measurement for each individual. 
 
-Let's grab this data from the project's git resository, place the data files into our ``data`` directory, and define the environmental variables ``VCF`` and ``METADATA`` with the locations of the genetic variant and metadata files respectively.
+Let's grab this data from the project's git repository, place the data files into our ``data`` directory, and define the environmental variables ``VCF`` and ``METADATA`` with the locations of the genetic variant and metadata files respectively.
 
 ```
 cd $DIR/workshop_material
