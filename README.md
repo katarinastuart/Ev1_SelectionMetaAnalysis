@@ -127,7 +127,6 @@ CITE: Privé, F., Luu, K., Vilhjálmsson, B. J., & Blum, M. G.B. (2020). Perform
 First, let's install PCAdapt and set your working directory.
 
 ```
-module load R/4.1.0-gimkl-2020a
 R
 
 install.packages("pcadapt")
