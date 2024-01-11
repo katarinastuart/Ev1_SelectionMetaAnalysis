@@ -408,7 +408,7 @@ q()
 
 <img src="/images/Fst_Windowed.PNG" alt="Windowed Fst" width="600"/>
 
-Finally, we will generate a list of outier SNP IDs. We do this by grabbing all of the SNPs located in the ourlier windows. 
+Finally, we will generate a list of outlier SNP IDs. We do this by grabbing all of the SNPs located in the outlier windows. 
 
 ```
 cd $DIR/analysis/vcftools_fst
