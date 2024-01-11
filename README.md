@@ -375,7 +375,6 @@ Now let's plot the Fst across the chromosome. To do this we will add line number
 ```
 awk '{print $0"\t"NR}' ./lemon_war.windowed.weir.fst  > lemon_war.windowed.weir.fst.edit
 
-module load R/4.1.0-gimkl-2020a
 R
 
 library("ggplot2")
