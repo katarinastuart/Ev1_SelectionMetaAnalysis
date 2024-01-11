@@ -296,7 +296,7 @@ Fst outliers will allow us to identify SNPs that behave abnormally in pairwise c
 The first things we need to do is use our metadata file (currently defined by the environmental variable ``METADATA``) to make three individual files containing just the list of individuals in each of the populations. We can do this by subseting our sample metadata file, using the command ``grep`` to grab lines that match each population's name, and then using ``awk`` to keep only the first column of metadta, i.e. the sample names.
 
 ```
-module load VCFtools/0.1.15-GCC-9.2.0-Perl-5.30.1
+module load quay.io/biocontainers/vcftools/0.1.15--he941832_2/module
 ```
 
 ```
