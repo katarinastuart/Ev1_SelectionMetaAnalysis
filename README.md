@@ -109,8 +109,8 @@ Across this workshop, we will need the genetic data to be in several different f
 
 ```
 cd $DIR/data
-module load VCFtools/0.1.15-GCC-9.2.0-Perl-5.30.1
-module load PLINK/1.09b6.16 
+module load quay.io/biocontainers/vcftools/0.1.15--he941832_2/module
+module load quay.io/biocontainers/plink/1.90b6.21--hec16e2b_2/module
 vcftools --vcf $VCF --plink --out starling_3populations.plink
 plink --file starling_3populations.plink --make-bed --noweb --out starling_3populations
 ```
