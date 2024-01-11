@@ -379,7 +379,7 @@ R
 
 library("ggplot2")
 
-setwd("/nesi/nobackup/uoa02613/kstuart_projects/outlier_analysis/analysis/vcftools_fst")
+setwd("/home/ubuntu/outlier_analysis/analysis/vcftools_fst")
 
 windowed_fst <- read.table("lemon_war.windowed.weir.fst.edit", sep="\t", header=TRUE)
 str(windowed_fst)
