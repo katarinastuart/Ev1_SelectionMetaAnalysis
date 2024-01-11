@@ -119,7 +119,7 @@ plink --file starling_3populations.plink --make-bed --noweb --out starling_3popu
 
 ## PCAdapt
 
-PCAdapt uses an ordinatio approach to find sites in a data set that are outliers with respect to background population structure. The PCAdapt manual is available [here](https://bcm-uga.github.io/pcadapt/articles/pcadapt.html). 
+PCAdapt uses an ordination approach to find sites in a data set that are outliers with respect to background population structure. The PCAdapt manual is available [here](https://bcm-uga.github.io/pcadapt/articles/pcadapt.html). 
 
 CITE: Privé, F., Luu, K., Vilhjálmsson, B. J., & Blum, M. G.B. (2020). Performing highly efficient genome scans for local adaptation with R package pcadapt version 4. Molecular Biology and Evolution.
 
