@@ -132,13 +132,13 @@ R
 install.packages("pcadapt")
 library("pcadapt")
 
-setwd("/nesi/nobackup/uoa02613/kstuart_projects/outlier_analysis/analysis/pcadapt/")
+setwd("/home/ubuntu/outlier_analysis/analysis/pcadapt/")
 ```
 
 Now let's load in the data - PCAdapt uses bed file types.
 
 ```
-starling_bed <- "/nesi/nobackup/uoa02613/kstuart_projects/outlier_analysis/data/starling_3populations.bed"
+starling_bed <- "/home/ubuntu/outlier_analysis/data/starling_3populations.bed"
 starlings_pcadapt <- read.pcadapt(starling_bed, type = "bed")
 ```
 
