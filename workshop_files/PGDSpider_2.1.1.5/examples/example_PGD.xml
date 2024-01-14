@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<?xml-stylesheet type="text/xsl" href="stylesheet_PGD.xsl"?>
+
+<PGD xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="PGD_schema.xsd">
+
+  <header title="Fake HLA data">
+    <numPop> 4 </numPop>
+    <ploidy> 2 </ploidy>    
+    <missing> ? </missing>
+    <gap> - </gap>
+    <gameticPhase> known </gameticPhase>
+  </header>
+
+
+  <dataDescription>
+    <numLoci> 2 </numLoci>
+    <dataType> Standard </dataType>
+    <locus id="loci one">
+      <locusChromosome> 3 </locusChromosome>
+      <locusLocation> Hs8_23892 </locusLocation>
+    </locus>
+    <locus id="loci two">
+      <locusChromosome> 3 </locusChromosome>
+      <locusLocation> Hs8_23992 </locusLocation>
+    </locus>
+  </dataDescription>
+ 
+
+  <population name="A sample of 6 Algerians">
+    <popSize> 3 </popSize>
+    <popLoci> loci one, loci two </popLoci>
+    <ind name="1">
+      <indGeogCoord> 35, 4 </indGeogCoord>
+      <indLingGroup> African </indLingGroup>
+      <data> 1104, 0200 </data>
+      <data> 0700, 0301 </data>
+    </ind>
+    <ind name="3">
+      <indGeogCoord> 36, 4 </indGeogCoord>
+      <indLingGroup> Africanic </indLingGroup>
+      <data> 0302, 0200 </data>
+      <data> 1310, 0402 </data>
+    </ind>
+    <ind name="4">
+      <indGeogCoord> 35, 5 </indGeogCoord>
+      <indLingGroup> Africanical </indLingGroup>
+      <data> 0402, 0602 </data>
+      <data> 1502, 0602 </data>
+    </ind>
+  </population>
+
+  <population name="A sample of 11 Bulgarians">
+    <popSize>6</popSize>
+    <popGeogCoord> 35, 4 </popGeogCoord>
+    <popLingGroup> African </popLingGroup>
+    <popLoci> loci one, loci two </popLoci>
+    <ind name="1">
+      <data> 1103, 0301 </data>
+      <data> 0301, 0200 </data>
+    </ind>
+    <ind name="2">
+      <data> 1101, 0301 </data>
+      <data> 0700, 0200 </data>
+    </ind>
+    <ind name="3">
+      <data> 1500, 0502 </data>
+      <data> 0301, 0200 </data>
+    </ind>
+    <ind name="4">
+      <data> 1103, 0301 </data>
+      <data> 1202, 0301 </data>
+    </ind>
+    <ind name="5">
+      <data> 0301, 0200 </data>
+      <data> 1500, 0601 </data>
+    </ind>
+    <ind name="6">
+      <data> 1600, 0502 </data>
+      <data> 0301, 0603 </data>
+    </ind>
+  </population>
+
+  <population name="A sample of 12 Egyptians">
+    <popSize>6</popSize>
+    <popLoci> loci one, loci two </popLoci>
+    <ind name="1">
+      <data> 1104, 0301 </data>
+      <data> 1600, 0502 </data>
+    </ind>
+    <ind name="3">
+      <data> 1303, 0301 </data>
+      <data> 1101, 0502 </data>
+    </ind>
+    <ind name="4">
+      <data> 1502, 0601 </data>
+      <data> 1500, 0602 </data>
+    </ind>
+    <ind name="6">
+      <data> 1101, 0301 </data>
+      <data> 1101, 0301 </data>
+    </ind>
+    <ind name="8">
+      <data> 1302, 0502 </data>
+      <data> 1101, 0609 </data>
+    </ind>
+    <ind name="9">
+      <data> 1500, 0302 </data>
+      <data> 0402, 0602 </data>
+    </ind>
+  </population>
+
+  <population name="A sample of 8 French">
+    <popSize>4</popSize>
+    <popLoci> loci one, loci two </popLoci>
+    <ind name="219">
+      <number_strains> 2 </number_strains>
+      <data> 0301, 0200 </data>
+      <data> 0101, 0501 </data>
+    </ind>
+    <ind name="239">
+      <number_strains> 2 </number_strains>
+      <data> 0301, 0200 </data>
+      <data> 0301, 0200 </data>
+    </ind>
+    <ind name="249">
+      <number_strains> 2 </number_strains>
+      <data> 1302, 0604 </data>
+      <data> 1500, 0602 </data>
+    </ind>
+    <ind name="250">
+      <number_strains> 2 </number_strains>
+      <data> 1401, 0503 </data>
+      <data> 1301, 0603 </data>
+    </ind>
+  </population>
+
+  <structure name="My population structure">
+    <numGroups> 2 </numGroups>
+    <group> A sample of 6 Algerians, A sample of 12 Egyptians </group>
+    <group> A sample of 11 Bulgarians, A sample of 8 French </group>
+  </structure>
+
+  <distanceMatrix name="Faked distance matrix">
+    <matrixSize> 11 </matrixSize>
+    <matrixLabels> 1, 2, 3, 4, 6, 8, 9, 219, 239, 249, 250 </matrixLabels>
+    <matrix> 0
+             1, 0
+             3, 4, 0
+             5, 3, 2, 0
+             6, 5, 3, 2, 0
+             6, 7, 5, 3, 2, 0
+             1, 2, 3, 5, 3, 2, 0
+             4, 5, 6, 7, 5, 3, 2, 0
+             1, 2, 3, 4, 5, 5, 3, 2, 0
+             0, 9, 8, 7, 6, 5, 5, 3, 2, 0
+             9, 8, 7, 6, 5, 4, 3, 5, 3, 2, 0
+    </matrix>
+  </distanceMatrix>
+
+</PGD>
