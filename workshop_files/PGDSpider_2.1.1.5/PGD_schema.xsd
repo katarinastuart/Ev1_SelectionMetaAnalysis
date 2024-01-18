@@ -1,0 +1,236 @@
+<?xml version="1.0"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <xs:element name="PGD">
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <!-- header xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
+        <xs:element name="header" minOccurs="1" maxOccurs="1">
+          <xs:complexType mixed="true">
+            <xs:all>
+              <xs:element name="organism" type="xs:string" minOccurs="0" maxOccurs="1"/>
+              
+              <xs:element name="numPop" type="xs:integer" minOccurs="1" maxOccurs="1"/>
+              
+              <xs:element name="ploidy" minOccurs="1" maxOccurs="1">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:whiteSpace value="collapse"/>
+                    <xs:pattern value="mixed|([0-9])+"/>
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element> 
+               
+              <xs:element name="missing" type="xs:string" minOccurs="1" maxOccurs="1"/>
+              
+              <xs:element name="gap" minOccurs="0" maxOccurs="1">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:whiteSpace value="collapse"/>
+                    <xs:length value="1"/>
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              
+              <xs:element name="gameticPhase" minOccurs="0" maxOccurs="1">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:whiteSpace value="collapse"/>
+                    <xs:pattern value="known|unknown"/>
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              
+              <xs:element name="recessiveData" minOccurs="0" maxOccurs="1">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:whiteSpace value="collapse"/>
+                    <xs:pattern value="no|yes"/>
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+            </xs:all>
+
+            <xs:attribute name="title" type="xs:string"/>
+            
+          </xs:complexType>  
+        </xs:element>  
+        
+        <!-- dataDescription xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
+        <xs:element name="dataDescription" minOccurs="1" maxOccurs="1">
+          <xs:complexType>
+            <xs:choice minOccurs="0" maxOccurs="unbounded"> 
+              <xs:element name="numLoci" type="xs:integer" minOccurs="1" maxOccurs="1"/>
+              
+              <xs:element name="dataType" type="xs:string" minOccurs="1" maxOccurs="1"/>
+              
+              <!-- locus xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
+              <xs:element name="locus" minOccurs="0" maxOccurs="unbounded">
+                <xs:complexType>
+                  <xs:all>
+                    <xs:element name="locusDataType" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                    
+                    <xs:element name="locusChromosome" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                    
+                    <xs:element name="locusLocation" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                    
+                    <xs:element name="locusGenic" minOccurs="0" maxOccurs="1">
+                      <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                          <xs:whiteSpace value="collapse"/>
+                          <xs:pattern value="coding|noncoding"/>
+                        </xs:restriction>
+                      </xs:simpleType>
+                    </xs:element> 
+                    
+                    <xs:element name="locusLength" type="xs:integer" minOccurs="0" maxOccurs="1"/>
+                    
+                    <xs:element name="locusAncestralState" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                    
+                    <xs:element name="locusLinks" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                    
+                    <xs:element name="locusComments" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                  </xs:all>
+                  
+                  <xs:attribute name="id" type="xs:string"/>
+                  
+                </xs:complexType>
+                
+              </xs:element>
+            </xs:choice>
+          </xs:complexType>  
+        </xs:element>  
+        
+        
+        <!-- population xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
+        <xs:element name="population" minOccurs="1" maxOccurs="unbounded">
+          <xs:complexType>
+            <xs:choice minOccurs="0" maxOccurs="unbounded">
+              <xs:element name="popSize" type="xs:integer" minOccurs="1" maxOccurs="1"/>
+              
+              <xs:element name="popGeogCoord" minOccurs="0" maxOccurs="1">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:whiteSpace value="collapse"/>
+                    <xs:pattern value="([0-9])+,([0-9])+|([0-9])+ ,([0-9])+|([0-9])+, ([0-9])+|([0-9])+ , ([0-9])+"/>
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              
+              <xs:element name="popLingGroup" type="xs:string" minOccurs="0" maxOccurs="1"/>
+              
+              <xs:element name="ploidy" minOccurs="0" maxOccurs="1">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:whiteSpace value="collapse"/>
+                    <xs:pattern value="mixed|([0-9])+"/>
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              
+              <xs:element name="popLoci" type="xs:string" minOccurs="0" maxOccurs="1"/>
+              
+              <!-- ind xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
+              <xs:element name="ind" minOccurs="1" maxOccurs="unbounded">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:choice minOccurs="0" maxOccurs="unbounded">
+                    
+                      <xs:element name="indGeogCoord" minOccurs="0" maxOccurs="1">
+                        <xs:simpleType>
+                          <xs:restriction base="xs:string">
+                            <xs:whiteSpace value="collapse"/>
+                            <xs:pattern value="([0-9])+,([0-9])+|([0-9])+ ,([0-9])+|([0-9])+, ([0-9])+|([0-9])+ , ([0-9])+"/>
+                          </xs:restriction>
+                        </xs:simpleType>
+                      </xs:element>
+                      
+                      <xs:element name="indLingGroup" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                      
+                      <xs:element name="indLoci" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                      
+                      <xs:element name="indPloidy" type="xs:integer" minOccurs="0" maxOccurs="1"/>
+                      
+                      <xs:element name="indFreq" type="xs:decimal" minOccurs="0" maxOccurs="1"/>
+                    
+                    </xs:choice>
+                    
+                    <xs:choice minOccurs="0" maxOccurs="unbounded">
+                      <xs:element name="indFreq" type="xs:decimal"/>
+                      
+                      <xs:element name="data" type="xs:string"/>
+                      
+                      <xs:element name="read">
+                        <xs:complexType>
+                          <xs:all>
+                            <xs:element name="start" type="xs:integer" minOccurs="1" maxOccurs="1"/>
+                            
+                            <xs:element name="length" type="xs:integer" minOccurs="0" maxOccurs="1"/>
+                            
+                            <xs:element name="data" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                            
+                            <xs:element name="quality" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                          </xs:all>
+                          
+                          <xs:attribute name="id" type="xs:string"/>
+                          
+                        </xs:complexType>
+                      </xs:element>
+                    </xs:choice>
+                                  
+                  </xs:sequence>
+                  
+                  <xs:attribute name="name" type="xs:string"/>
+                  
+                </xs:complexType>
+              </xs:element>
+            </xs:choice>
+            
+            <xs:attribute name="name" type="xs:string"/>
+            
+          </xs:complexType>  
+        </xs:element>  
+
+        
+        <!-- structure xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
+        <xs:element name="structure" minOccurs="0" maxOccurs="unbounded">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="numGroups" type="xs:integer" minOccurs="0" maxOccurs="1"/>
+              
+              <xs:element name="group" minOccurs="1" maxOccurs="unbounded">
+                <xs:complexType mixed="true">
+                  <xs:attribute name="name" type="xs:string"/>
+                </xs:complexType>
+              </xs:element>
+              
+              <xs:element name="numGroups" type="xs:integer" minOccurs="0" maxOccurs="1"/>
+              
+            </xs:sequence>
+            
+            <xs:attribute name="name" type="xs:string"/>
+            
+          </xs:complexType>  
+        </xs:element> 
+        
+        <!-- distanceMatrix xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
+        <xs:element name="distanceMatrix" minOccurs="0" maxOccurs="unbounded">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="matrixSize" type="xs:integer" minOccurs="1" maxOccurs="1"/>
+              
+              <xs:element name="matrixLabels" type="xs:string" minOccurs="1" maxOccurs="1"/>
+              
+              <xs:element name="matrix" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            </xs:sequence>
+            
+            <xs:attribute name="name" type="xs:string"/>
+              
+          </xs:complexType>  
+        </xs:element>   
+  
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+  
+</xs:schema>
