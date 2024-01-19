@@ -443,9 +443,7 @@ Bayescan identified outlier SNPs based on allele frequencies. More explination a
 First, we will need to convert out VCF to the Bayescan format. To do this we will use the genetic file conversion program called [PGDspider](http://www.cmpg.unibe.ch/software/PGDSpider/). 
 
 ```
-cd $DIR/programs
-wget http://www.cmpg.unibe.ch/software/PGDSpider/PGDSpider_2.1.1.5.zip
-unzip *.zip
+cp -r $DIR/workshop_material/Ev1_SelectionMetaAnalysis/workshop_files/PGDSpider_2.1.1.5 $DIR/programs/.
 ```
 We also need to create a new populations metadata file, which contains individual names in column 1, and population names in column 2.
 
