@@ -460,46 +460,47 @@ cd $DIR/analysis/bayescan
 
 We now run PGDSpider in two steps: first we convert the VCF file to the PGD format, second from PGD format to Bayescan format. To do this we will need to create a SPID file. create a file called *VCF_PGD.spid* using the ``nano`` command. Paste in the below, replacing the location of you metadata file.
 
+```
+nano VCF_PGD.spid
+```
 include snapshot of SPID:
 
+```
+# VCF Parser questions 
+PARSER_FORMAT=VCF 
+# Only output SNPs with a phred-scaled quality of at least: 
+VCF_PARSER_QUAL_QUESTION= 
+# Select population definition file: 
+VCF_PARSER_POP_FILE_QUESTION=/home/ubuntu/outlier_analysis/data/starling_3populations_metadata_INDPOP.txt 
+# What is the ploidy of the data? 
+VCF_PARSER_PLOIDY_QUESTION=DIPLOID 
+# Do you want to include a file with population definitions?
+VCF_PARSER_POP_QUESTION=true 
+# Output genotypes as missing if the phred-scale genotype quality is below: 
+VCF_PARSER_GTQUAL_QUESTION= 
+# Do you want to include non-polymorphic SNPs? 
+VCF_PARSER_MONOMORPHIC_QUESTION=false 
+# Only output following individuals (ind1, ind2, ind4, ...): 
+VCF_PARSER_IND_QUESTION= 
+# Only input following regions (refSeqName:start:end, multiple regions: whitespace separated): 
+VCF_PARSER_REGION_QUESTION= 
+# Output genotypes as missing if the read depth of a position for the sample is below: 
+VCF_PARSER_READ_QUESTION= 
+# Take most likely genotype if "PL" or "GL" is given in the genotype field? 
+VCF_PARSER_PL_QUESTION=false
+# Do you want to exclude loci with only missing data? 
+VCF_PARSER_EXC_MISSING_LOCI_QUESTION=false 
 
-> \# VCF Parser questions <br>
-> PARSER_FORMAT=VCF <br>
-> \# Only output SNPs with a phred-scaled quality of at least: <br>
-> VCF_PARSER_QUAL_QUESTION= <br>
-> \# Select population definition file: <br>
-> VCF_PARSER_POP_FILE_QUESTION=/nesi/nobackup/uoa02613/kstuart_projects/outlier_analysis/data/starling_3populations_metadata_INDPOP.txt <br>
-> \# What is the ploidy of the data? <br>
-> VCF_PARSER_PLOIDY_QUESTION=DIPLOID <br>
-> \# Do you want to include a file with population definitions? <br>
-> VCF_PARSER_POP_QUESTION=true <br>
-> \# Output genotypes as missing if the phred-scale genotype quality is below: <br>
-> VCF_PARSER_GTQUAL_QUESTION= <br>
-> \# Do you want to include non-polymorphic SNPs? <br>
-> VCF_PARSER_MONOMORPHIC_QUESTION=false <br>
-> \# Only output following individuals (ind1, ind2, ind4, ...): <br>
-> VCF_PARSER_IND_QUESTION= <br>
-> \# Only input following regions (refSeqName:start:end, multiple regions: whitespace separated): <br>
-> VCF_PARSER_REGION_QUESTION= <br>
-> \# Output genotypes as missing if the read depth of a position for the sample is below: <br>
-> VCF_PARSER_READ_QUESTION= <br>
-> \# Take most likely genotype if "PL" or "GL" is given in the genotype field? <br>
-> VCF_PARSER_PL_QUESTION=false <br>
-> \# Do you want to exclude loci with only missing data? <br>
-> VCF_PARSER_EXC_MISSING_LOCI_QUESTION=false <br>
->  <br>
-> \# PGD Writer questions <br>
-> WRITER_FORMAT=PGD <br>
+# PGD Writer questions
+WRITER_FORMAT=PGD 
+```
 
-
-
-Now run the two step convserion.
+Now run the two step conversion.
 
 ```
-module purge
-module load Java/1.8.0_144
+module load quay.io/biocontainers/pgdspider/2.1.1.5--hdfd78af_1/module
 
-java -Xmx1024m -Xms512m -jar $DIR/programs/PGDSpider_2.1.1.5/PGDSpider2-cli.jar -inputfile $VCF -inputformat VCF -outputfile starling_3populations.pgd -outputformat  PGD -spid VCF_PGD.spid 
+PGDSpider2-cli -inputfile $VCF -inputformat VCF -outputfile starling_3populations.pgd -outputformat  PGD -spid VCF_PGD.spid 
 
 java -Xmx1024m -Xms512m -jar $DIR/programs/PGDSpider_2.1.1.5/PGDSpider2-cli.jar -inputfile starling_3populations.pgd -inputformat PGD -outputfile starling_3populations.bs -outputformat GESTE_BAYE_SCAN
 ```
