@@ -502,7 +502,7 @@ module load quay.io/biocontainers/pgdspider/2.1.1.5--hdfd78af_1/module
 
 PGDSpider2-cli -inputfile $VCF -inputformat VCF -outputfile starling_3populations.pgd -outputformat  PGD -spid VCF_PGD.spid 
 
-java -Xmx1024m -Xms512m -jar $DIR/programs/PGDSpider_2.1.1.5/PGDSpider2-cli.jar -inputfile starling_3populations.pgd -inputformat PGD -outputfile starling_3populations.bs -outputformat GESTE_BAYE_SCAN
+PGDSpider2-cli -inputfile starling_3populations.pgd -inputformat PGD -outputfile starling_3populations.bs -outputformat GESTE_BAYE_SCAN
 ```
 Let's have a quick look at what the input file looks like:
 
