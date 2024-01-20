@@ -1,0 +1,35 @@
+# spid-file generated: Mon Jun 20 13:18:29 CEST 2011
+
+# STRUCTURE Parser questions
+PARSER_FORMAT=STRUCTURE
+
+# Are individual names (labels) included in the input file?
+STRUCTURE_PARSER_IND_NAMES_QUESTION=true
+# Enter the number of markers (loci) listed in the input file:
+STRUCTURE_PARSER_NUMBER_LOCI_QUESTION=
+# What is the missing value code (-9, -999, ...):
+STRUCTURE_PARSER_MISSING_CODE_QUESTION=-9
+# How are Microsat alleles coded?
+STRUCTURE_PARSER_MICROSAT_CODING_QUESTION=REPEATS
+# What is the ploidy of the data?
+STRUCTURE_PARSER_PLOIDY_QUESTION=DIPLOID_TWO_ROWS
+# Is the "PopData" column (population identifier) present in the input file?
+STRUCTURE_PARSER_POP_DATA_PRESENT_QUESTION=true
+# Enter the size of the repeated motif (1, 2, 3, ...):
+STRUCTURE_PARSER_REPEAT_SIZE_QUESTION=
+# Is the "Phase Information" row present?
+STRUCTURE_PARSER_PHASE_ROW_QUESTION=false
+# Are marker (locus) names included?
+STRUCTURE_PARSER_LOCI_NAMES_QUESTION=true
+# Select the type of the data:
+STRUCTURE_PARSER_DATA_TYPE_QUESTION=MICROSAT
+# Are the "Recessive Alleles" row and/or the "Inter-Marker Distance" row present in the input file?
+STRUCTURE_PARSER_ADDITIONAL_ROW_QUESTION=None
+
+# Arlequin Writer questions
+WRITER_FORMAT=ARLEQUIN
+
+# Enter the locus/locus combination you want to write to the Arlequin file:
+ARLEQUIN_WRITER_LOCUS_COMBINATION_QUESTION=
+# Specify which data type should be included in the Arlequin file  (Arlequin can only analyze one data type per file):
+ARLEQUIN_WRITER_DATA_TYPE_QUESTION=DNA

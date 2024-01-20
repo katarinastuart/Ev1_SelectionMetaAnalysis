@@ -1,0 +1,199 @@
+=====================
+ PGDSpider Changelog
+=====================
+2.1.1.5 - 20180507
+- bug fix (NEXUS writer)
+
+2.1.1.4 - 20180503
+- bug fix (FASTA parser)
+
+2.1.1.3 - 20171110
+- bug fix (VCF writer, MEGA parser)
+
+2.1.1.2 -20170719
+- bug fix (VCF parser)
+
+2.1.1.1 -20170607
++ FASTA writer: option to write haploid sequences
+- bug fix (MEGA parser)
+
+2.1.1.0 - 20170116
++ new input formats: extended multi-FASTA format (XMFA), MAF
++ new output formats: extended multi-FASTA format (XMFA)
++ RAxML: support to parse/write partition file
++ integrate compatibility with samtools/bcftools >= 1.0
+- bug fix (MIGRATE writer)
+
+2.1.0.3 - 20160628
+- bug fix (CLI spid file)
+
+2.1.0.2 - 20160613
++ IM/IMA2/MEGA parser: option to keep loci separate or not
+- bug fix
+
+2.1.0.1 - 20160425
++ Arlequin writer: if too many SNPs collapse them
+- bug fix (config file)
+
+2.1.0.0 - 20160222
++ PGD format change: new sub tag "locusAncestralState" in locus tag to store ancestral state of locus
++ integrate locus ancestral state in VCF/BCF/SAM/BAM/Eigensoft parser and VCF/BCF/Eigensoft/Arlequin writer
++ Arlequin writer: numeric DNA encoding with 0 representing the ancestral state (SFS analyses)
+- bug fix (VCF/BCF writer)
+
+2.0.9.2 - 20160114
++ option to remove half missing genotypes in Bayenv writer
++ option to write sample/loci name file in Bayenv writer
+- bug fix (missing data in binary NEXUS)
+
+2.0.9.1 - 20151217
++ adapted Arlquin format
++ parse inter-marker distances (STRUCTURE)
+- bug fix (Bayenv)
+
+2.0.9.0 - 20150925
++ new output format: Bayenv
+
+2.0.8.3 - 20150707
+- bug fix (BAPS parser)
+
+2.0.8.2 - 20150429
+- bug fix (PHYLIP writer, VCF parser)
+
+2.0.8.1 - 20150417
++ support for pop names in FASTA parser
+
+2.0.8.0 - 20150311
++ support for SNP data in PHYLIP and MEGA writer
+- bug fix (VCF parser)
+
+2.0.7.4 - 20150127
+- bug fix (NEXUS parser)
+- bug fix (EIGENSOFT writer)
+
+2.0.7.3 - 20150112
+- bug fix (NEXUS parser)
+
+2.0.7.2 - 20141010
+- bug fix (EIGENSOFT format)
+- bug fix (FASTA SNP parser)
+
+2.0.7.1 - 20140815
+- bug fix (Nexus binary format)
+
+2.0.7.0 - 20140714
++ support for fastSTRUCTURE
+
+2.0.6.0 - 20140702
++ new input formats: Stanford HGDP format, Eigensoft(EIGENSTRAT, ANCESTRYMAP), ONeSAMP
++ new output formats: Eigensoft(EIGENSTRAT, ANCESTRYMAP), BAMOVA, ONeSAMP, Structurama
++ new feature in BCF, FASTA, NEXUS, VCF
++ keep order of populations/individuals/loci
+- bug fix
+
+2.0.5.2 - 20140311
+- bug fix
+
+2.0.5.1 - 20131018
+- SPID file bug fix
+
+2.0.5.0 - 20130719
++ improved handling of indels in VCF and BCF parser
++ option to include non-polymorphic positions in VCF and BCF parser
+- bug fix
+
+2.0.4.0 - 20130221
++ NEXUS parser now able to parse CharSet/CharPartition commands in SET and MrBayes block
++ enhanced support for multi-locus DNA data
++ STRUCTURE writer able to output inter-marker distances
+
+2.0.3.0 - 20130111
++ new features in FSTAT, GDA, GENEPOP, GENETIX, GESTE/BayeScan, IMMANC, NewHybrids and STRUCTURE writer
++ Arlequin frequency data is directly converted to STANDARD data type
+
+2.0.2.1 - 20121204
+- bug fix
+
+2.0.2.0 - 20121030
++ vcf 4.1 support
+
+2.0.1.9 - 20120828
++ new features in several parser/writer
+- bug fix
+
+2.0.1.8 - 20120810
++ memory error message
+
+2.0.1.7 - 20120522
+- bug fix
+
+2.0.1.6 - 20120507
++ new input/output format: IMa2
++ new feature in PHYLIP format parser/writer
+
+2.0.1.5 - 20120410
+- bug fix
+
+2.0.1.4 - 20120116
+- bug fix
+
+2.0.1.3 - 20111230
++ new feature in VCF/BCF format parser
+
+2.0.1.2 - 20111207
++ new feature in PED format parser
+- bug fix
+
+2.0.1.1 - 20111109
+- bug fix
+
+2.0.1.0 - 20111010
++ new input/output format: FASTQ
++ new "Create/Edit SPID file" button
++ display "writing output file" information
++ file chooser: remember last directory
++ Java Web Start of PGDSpider 
+
+2.0.0.3 - 20110617
++ new input/output formats: SAM, BAM, VCF,
+  BCF, PED, GENELAND, NewHybrids
+
+2.0.0.2 - 20091113
++ added cli mode
++ italian translation
++ new output formats: KML and GESTE/BayeScan
+
+1.0.1.4 - 20081109
++ progress information during parsing process
+
+1.0.1.3 - 20081104
++ french translation
++ change gui language without restart
+- fixed memory issues in file viewer
+
+1.0.1.2 - 20081103
++ language dependent help files
+
+1.0.1.1 - 20081030
++ save window size on program exit
++ multi-language support
+
+1.0.1.0 - 200810
+- fixed windows loader for large file processing
+  VM options "-Xmx1024m -Xms512M"
+
+1.0.0.0 - 200809
+- first release
+
+
+__________________________________________________________
+CMPG - Computational and Molecular Population Genetics Lab
+Institute of Ecology and Evolution
+University of Bern
+
+Member of the Swiss Institute of Bioinformatics (SIB)
+
+(c) 2007 - 2014 by Heidi Lischer, University of Bern
+
+heidi.lischer@iee.unibe.ch
+http://cmpg.iee.unibe.ch

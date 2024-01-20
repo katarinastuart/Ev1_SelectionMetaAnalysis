@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<entry key="Language">English</entry>
+<entry key="PathBcftools"></entry>
+<entry key="Resizable">true</entry>
+<entry key="PathSamtools"></entry>
+<entry key="WindowWidth">850</entry>
+<entry key="WindowHeight">600</entry>
+</properties>
