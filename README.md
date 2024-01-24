@@ -442,9 +442,6 @@ Bayescan identified outlier SNPs based on allele frequencies. More explination a
 
 First, we will need to convert out VCF to the Bayescan format. To do this we will use the genetic file conversion program called [PGDspider](http://www.cmpg.unibe.ch/software/PGDSpider/). 
 
-```
-cp -r $DIR/workshop_material/Ev1_SelectionMetaAnalysis/workshop_files/PGDSpider_2.1.1.5 $DIR/programs/.
-```
 We also need to create a new populations metadata file, which contains individual names in column 1, and population names in column 2.
 
 ```
@@ -472,24 +469,24 @@ PARSER_FORMAT=VCF
 VCF_PARSER_QUAL_QUESTION= 
 # Select population definition file: 
 VCF_PARSER_POP_FILE_QUESTION=/home/ubuntu/outlier_analysis/data/starling_3populations_metadata_INDPOP.txt 
-# What is the ploidy of the data? 
-VCF_PARSER_PLOIDY_QUESTION=DIPLOID 
+# What is the ploidy of the data?
+VCF_PARSER_PLOIDY_QUESTION=DIPLOID
 # Do you want to include a file with population definitions?
-VCF_PARSER_POP_QUESTION=true 
-# Output genotypes as missing if the phred-scale genotype quality is below: 
-VCF_PARSER_GTQUAL_QUESTION= 
-# Do you want to include non-polymorphic SNPs? 
-VCF_PARSER_MONOMORPHIC_QUESTION=false 
-# Only output following individuals (ind1, ind2, ind4, ...): 
-VCF_PARSER_IND_QUESTION= 
-# Only input following regions (refSeqName:start:end, multiple regions: whitespace separated): 
-VCF_PARSER_REGION_QUESTION= 
-# Output genotypes as missing if the read depth of a position for the sample is below: 
-VCF_PARSER_READ_QUESTION= 
-# Take most likely genotype if "PL" or "GL" is given in the genotype field? 
+VCF_PARSER_POP_QUESTION=true
+# Output genotypes as missing if the phred-scale genotype quality is below:
+VCF_PARSER_GTQUAL_QUESTION=
+# Do you want to include non-polymorphic SNPs?
+VCF_PARSER_MONOMORPHIC_QUESTION=false
+# Only output following individuals (ind1, ind2, ind4, ...):
+VCF_PARSER_IND_QUESTION=
+# Only input following regions (refSeqName:start:end, multiple regions: whitespace separated):
+VCF_PARSER_REGION_QUESTION=
+# Output genotypes as missing if the read depth of a position for the sample is below:
+VCF_PARSER_READ_QUESTION=
+# Take most likely genotype if "PL" or "GL" is given in the genotype field?
 VCF_PARSER_PL_QUESTION=false
-# Do you want to exclude loci with only missing data? 
-VCF_PARSER_EXC_MISSING_LOCI_QUESTION=false 
+# Do you want to exclude loci with only missing data?
+VCF_PARSER_EXC_MISSING_LOCI_QUESTION=false
 
 # PGD Writer questions
 WRITER_FORMAT=PGD 
