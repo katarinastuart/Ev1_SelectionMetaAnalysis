@@ -528,25 +528,12 @@ Now let's set Bayescan to run. Using the ``nano bayescan_starling.sl`` we will c
 
 ```
 #!/bin/bash -e
-#SBATCH --job-name=2023_04_14.bayescan_starling.sl
-#SBATCH --account=uoa02613
-#SBATCH --time=00-12:00:00
-#SBATCH --mem=5GB
-#SBATCH --output=%x_%j.errout
-#SBATCH --mail-user=katarina.stuart@auckland.ac.nz
-#SBATCH --mail-type=ALL
-#SBATCH --nodes=1
-#SBATCH --ntasks=1
-#SBATCH --cpus-per-task=8
-#SBATCH --profile task
-
-cd /nesi/nobackup/uoa02613/kstuart_projects/outlier_analysis/analysis/bayescan
 
 #load bayescan
-module load BayeScan/2.1-GCCcore-7.4.0
+module load quay.io/biocontainers/bayescan/2.0.1--h4ac6f70_6
 
 #run bayescan. 
-bayescan_2.1 ./starling_3populations.bs -od ./ -threads 8 -n 5000 -thin 10 -nbp 20 -pilot 5000 -burn 50000 -pr_odds 10
+bayescan_2 ./starling_3populations.bs -od ./ -threads 8 -n 5000 -thin 10 -nbp 20 -pilot 5000 -burn 50000 -pr_odds 10
 ```
  
 Identify outliers:
