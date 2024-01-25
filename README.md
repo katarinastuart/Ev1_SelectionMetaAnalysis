@@ -530,10 +530,10 @@ Now let's set Bayescan to run. Using the ``nano bayescan_starling.sl`` we will c
 #!/bin/bash -e
 
 #load bayescan
-module load quay.io/biocontainers/bayescan/2.0.1--h4ac6f70_6
+module load quay.io/biocontainers/bayescan/2.0.1--h9f5acd7_4
 
 #run bayescan. 
-bayescan_2 ./starling_3populations.bs -od ./ -threads 8 -n 5000 -thin 10 -nbp 20 -pilot 5000 -burn 50000 -pr_odds 10
+bayescan2 ./starling_3populations.bs -od ./ -threads 2 -n 5000 -thin 10 -nbp 20 -pilot 5000 -burn 50000 -pr_odds 10
 ```
  
 Identify outliers:
@@ -644,27 +644,16 @@ manipulate file so it has baypass format, numbers set for plink output file and 
 tail -n +2 starling_3populations.frq.strat | awk '{ $9 = $8 - $7 } 1' | awk '{print $7,$9}' | tr "\n" " " | sed 's/ /\n/6; P; D' > starling_3populations_baypass.txt
 ```
 
-Now we can run Baypass by creating a slurm script ``baypass1_starling.sl``, which should run for about 5 minutes.
+Now we can run Baypass by creating a script ``baypass1_starling.sl``, which should run for about 5 minutes.
 
 ```
 #!/bin/bash -e
-#SBATCH --job-name=2023_04_14.baypass1_starling.sl
-#SBATCH --account=uoa02613
-#SBATCH --time=00-12:00:00
-#SBATCH --mem=5GB
-#SBATCH --output=%x_%j.errout
-#SBATCH --mail-user=katarina.stuart@auckland.ac.nz
-#SBATCH --mail-type=ALL
-#SBATCH --nodes=1
-#SBATCH --ntasks=1
-#SBATCH --cpus-per-task=4
-#SBATCH --profile task
 
-module load BayPass/2.31-intel-2022a
+module load quay.io/biocontainers/baypass/2.31--h1c9e865_2
 
 cd /nesi/nobackup/uoa02613/kstuart_projects/outlier_analysis/analysis/baypass
 
-i_baypass -npop 3 -gfile ./starling_3populations_baypass.txt -outprefix starling_3populations_baypass -nthreads 4
+g_baypass -npop 3 -gfile ./starling_3populations_baypass.txt -outprefix starling_3populations_baypass -nthreads 4
 ```
 
 Running in R to make the anapod data. First let's quickly download the utils we need.
