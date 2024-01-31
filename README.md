@@ -542,7 +542,7 @@ Identify outliers:
 module load R/4.1.0-gimkl-2020a
 R
 library(ggplot2)
-setwd("/nesi/nobackup/uoa02613/kstuart_projects/outlier_analysis/analysis/bayescan")
+setwd("/home/ubuntu/outlier_analysis/analysis/bayescan")
 source("/opt/nesi/CS400_centos7_bdw/BayeScan/2.1-GCCcore-7.4.0/R\ functions/plot_R.r")
 outliers.bayescan=plot_bayescan("starling_3population_fst.txt",FDR=0.05)
 outliers.bayescan
@@ -651,7 +651,7 @@ Now we can run Baypass by creating a script ``baypass1_starling.sl``, which shou
 
 module load quay.io/biocontainers/baypass/2.31--h1c9e865_2
 
-cd /nesi/nobackup/uoa02613/kstuart_projects/outlier_analysis/analysis/baypass
+cd /home/ubuntu/outlier_analysis/analysis/baypass
 
 g_baypass -npop 3 -gfile ./starling_3populations_baypass.txt -outprefix starling_3populations_baypass -nthreads 4
 ```
