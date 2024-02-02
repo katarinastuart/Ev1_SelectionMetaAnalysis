@@ -59,8 +59,8 @@ We'll cover the pre-processing of program specific input files, how to run the p
 ## Define you working directory for this project, and the VCF file location:
 
 ```
-mkdir /nesi/nobackup/uoa02613/kstuart_projects/outlier_analysis
-DIR=/nesi/nobackup/uoa02613/kstuart_projects/outlier_analysis
+mkdir /home/ubuntu/outlier_analysis
+DIR=/home/ubuntu/outlier_analysis
 cd $DIR
 ```
 
@@ -90,7 +90,7 @@ The data provided in this workshop contains 5007 SNPs loci for across 39 individ
 
 There is also a metadata file, that contains the individuals unique IDs, their assigned populations, and a wingspan measurement for each individual. 
 
-Let's grab this data from the project's git resository, place the data files into our ``data`` directory, and define the environmental variables ``VCF`` and ``METADATA`` with the locations of the genetic variant and metadata files respectively.
+Let's grab this data from the project's git repository, place the data files into our ``data`` directory, and define the environmental variables ``VCF`` and ``METADATA`` with the locations of the genetic variant and metadata files respectively.
 
 ```
 cd $DIR/workshop_material
@@ -109,8 +109,8 @@ Across this workshop, we will need the genetic data to be in several different f
 
 ```
 cd $DIR/data
-module load VCFtools/0.1.15-GCC-9.2.0-Perl-5.30.1
-module load PLINK/1.09b6.16 
+module load quay.io/biocontainers/vcftools/0.1.15--he941832_2/module
+module load quay.io/biocontainers/plink/1.90b6.21--hec16e2b_2/module
 vcftools --vcf $VCF --plink --out starling_3populations.plink
 plink --file starling_3populations.plink --make-bed --noweb --out starling_3populations
 ```
@@ -119,7 +119,7 @@ plink --file starling_3populations.plink --make-bed --noweb --out starling_3popu
 
 ## PCAdapt
 
-PCAdapt uses an ordinatio approach to find sites in a data set that are outliers with respect to background population structure. The PCAdapt manual is available [here](https://bcm-uga.github.io/pcadapt/articles/pcadapt.html). 
+PCAdapt uses an ordination approach to find sites in a data set that are outliers with respect to background population structure. The PCAdapt manual is available [here](https://bcm-uga.github.io/pcadapt/articles/pcadapt.html). 
 
 CITE: Privé, F., Luu, K., Vilhjálmsson, B. J., & Blum, M. G.B. (2020). Performing highly efficient genome scans for local adaptation with R package pcadapt version 4. Molecular Biology and Evolution.
 
@@ -127,19 +127,18 @@ CITE: Privé, F., Luu, K., Vilhjálmsson, B. J., & Blum, M. G.B. (2020). Perform
 First, let's install PCAdapt and set your working directory.
 
 ```
-module load R/4.1.0-gimkl-2020a
 R
 
 install.packages("pcadapt")
 library("pcadapt")
 
-setwd("/nesi/nobackup/uoa02613/kstuart_projects/outlier_analysis/analysis/pcadapt/")
+setwd("/home/ubuntu/outlier_analysis/analysis/pcadapt/")
 ```
 
 Now let's load in the data - PCAdapt uses bed file types.
 
 ```
-starling_bed <- "/nesi/nobackup/uoa02613/kstuart_projects/outlier_analysis/data/starling_3populations.bed"
+starling_bed <- "/home/ubuntu/outlier_analysis/data/starling_3populations.bed"
 starlings_pcadapt <- read.pcadapt(starling_bed, type = "bed")
 ```
 
@@ -297,7 +296,7 @@ Fst outliers will allow us to identify SNPs that behave abnormally in pairwise c
 The first things we need to do is use our metadata file (currently defined by the environmental variable ``METADATA``) to make three individual files containing just the list of individuals in each of the populations. We can do this by subseting our sample metadata file, using the command ``grep`` to grab lines that match each population's name, and then using ``awk`` to keep only the first column of metadta, i.e. the sample names.
 
 ```
-module load VCFtools/0.1.15-GCC-9.2.0-Perl-5.30.1
+module load quay.io/biocontainers/vcftools/0.1.15--he941832_2/module
 ```
 
 ```
@@ -376,12 +375,11 @@ Now let's plot the Fst across the chromosome. To do this we will add line number
 ```
 awk '{print $0"\t"NR}' ./lemon_war.windowed.weir.fst  > lemon_war.windowed.weir.fst.edit
 
-module load R/4.1.0-gimkl-2020a
 R
 
 library("ggplot2")
 
-setwd("/nesi/nobackup/uoa02613/kstuart_projects/outlier_analysis/analysis/vcftools_fst")
+setwd("/home/ubuntu/outlier_analysis/analysis/vcftools_fst")
 
 windowed_fst <- read.table("lemon_war.windowed.weir.fst.edit", sep="\t", header=TRUE)
 str(windowed_fst)
@@ -410,7 +408,7 @@ q()
 
 <img src="/images/Fst_Windowed.PNG" alt="Windowed Fst" width="600"/>
 
-Finally, we will generate a list of outier SNP IDs. We do this by grabbing all of the SNPs located in the ourlier windows. 
+Finally, we will generate a list of outlier SNP IDs. We do this by grabbing all of the SNPs located in the outlier windows. 
 
 ```
 cd $DIR/analysis/vcftools_fst
@@ -444,11 +442,6 @@ Bayescan identified outlier SNPs based on allele frequencies. More explination a
 
 First, we will need to convert out VCF to the Bayescan format. To do this we will use the genetic file conversion program called [PGDspider](http://www.cmpg.unibe.ch/software/PGDSpider/). 
 
-```
-cd $DIR/programs
-wget http://www.cmpg.unibe.ch/software/PGDSpider/PGDSpider_2.1.1.5.zip
-unzip *.zip
-```
 We also need to create a new populations metadata file, which contains individual names in column 1, and population names in column 2.
 
 ```
@@ -464,48 +457,49 @@ cd $DIR/analysis/bayescan
 
 We now run PGDSpider in two steps: first we convert the VCF file to the PGD format, second from PGD format to Bayescan format. To do this we will need to create a SPID file. create a file called *VCF_PGD.spid* using the ``nano`` command. Paste in the below, replacing the location of you metadata file.
 
+```
+nano VCF_PGD.spid
+```
 include snapshot of SPID:
 
+```
+# VCF Parser questions 
+PARSER_FORMAT=VCF 
+# Only output SNPs with a phred-scaled quality of at least: 
+VCF_PARSER_QUAL_QUESTION= 
+# Select population definition file: 
+VCF_PARSER_POP_FILE_QUESTION=/home/ubuntu/outlier_analysis/data/starling_3populations_metadata_INDPOP.txt 
+# What is the ploidy of the data?
+VCF_PARSER_PLOIDY_QUESTION=DIPLOID
+# Do you want to include a file with population definitions?
+VCF_PARSER_POP_QUESTION=true
+# Output genotypes as missing if the phred-scale genotype quality is below:
+VCF_PARSER_GTQUAL_QUESTION=
+# Do you want to include non-polymorphic SNPs?
+VCF_PARSER_MONOMORPHIC_QUESTION=false
+# Only output following individuals (ind1, ind2, ind4, ...):
+VCF_PARSER_IND_QUESTION=
+# Only input following regions (refSeqName:start:end, multiple regions: whitespace separated):
+VCF_PARSER_REGION_QUESTION=
+# Output genotypes as missing if the read depth of a position for the sample is below:
+VCF_PARSER_READ_QUESTION=
+# Take most likely genotype if "PL" or "GL" is given in the genotype field?
+VCF_PARSER_PL_QUESTION=false
+# Do you want to exclude loci with only missing data?
+VCF_PARSER_EXC_MISSING_LOCI_QUESTION=false
 
-> \# VCF Parser questions <br>
-> PARSER_FORMAT=VCF <br>
-> \# Only output SNPs with a phred-scaled quality of at least: <br>
-> VCF_PARSER_QUAL_QUESTION= <br>
-> \# Select population definition file: <br>
-> VCF_PARSER_POP_FILE_QUESTION=/nesi/nobackup/uoa02613/kstuart_projects/outlier_analysis/data/starling_3populations_metadata_INDPOP.txt <br>
-> \# What is the ploidy of the data? <br>
-> VCF_PARSER_PLOIDY_QUESTION=DIPLOID <br>
-> \# Do you want to include a file with population definitions? <br>
-> VCF_PARSER_POP_QUESTION=true <br>
-> \# Output genotypes as missing if the phred-scale genotype quality is below: <br>
-> VCF_PARSER_GTQUAL_QUESTION= <br>
-> \# Do you want to include non-polymorphic SNPs? <br>
-> VCF_PARSER_MONOMORPHIC_QUESTION=false <br>
-> \# Only output following individuals (ind1, ind2, ind4, ...): <br>
-> VCF_PARSER_IND_QUESTION= <br>
-> \# Only input following regions (refSeqName:start:end, multiple regions: whitespace separated): <br>
-> VCF_PARSER_REGION_QUESTION= <br>
-> \# Output genotypes as missing if the read depth of a position for the sample is below: <br>
-> VCF_PARSER_READ_QUESTION= <br>
-> \# Take most likely genotype if "PL" or "GL" is given in the genotype field? <br>
-> VCF_PARSER_PL_QUESTION=false <br>
-> \# Do you want to exclude loci with only missing data? <br>
-> VCF_PARSER_EXC_MISSING_LOCI_QUESTION=false <br>
->  <br>
-> \# PGD Writer questions <br>
-> WRITER_FORMAT=PGD <br>
+# PGD Writer questions
+WRITER_FORMAT=PGD 
+```
 
-
-
-Now run the two step convserion.
+Now run the two step conversion.
 
 ```
-module purge
-module load Java/1.8.0_144
+module load quay.io/biocontainers/pgdspider/2.1.1.5--hdfd78af_1/module
 
-java -Xmx1024m -Xms512m -jar $DIR/programs/PGDSpider_2.1.1.5/PGDSpider2-cli.jar -inputfile $VCF -inputformat VCF -outputfile starling_3populations.pgd -outputformat  PGD -spid VCF_PGD.spid 
+PGDSpider2-cli -inputfile $VCF -inputformat VCF -outputfile starling_3populations.pgd -outputformat  PGD -spid VCF_PGD.spid 
 
-java -Xmx1024m -Xms512m -jar $DIR/programs/PGDSpider_2.1.1.5/PGDSpider2-cli.jar -inputfile starling_3populations.pgd -inputformat PGD -outputfile starling_3populations.bs -outputformat GESTE_BAYE_SCAN
+PGDSpider2-cli -inputfile starling_3populations.pgd -inputformat PGD -outputfile starling_3populations.bs -outputformat GESTE_BAYE_SCAN
 ```
 Let's have a quick look at what the input file looks like:
 
@@ -530,38 +524,24 @@ So for each population we have a note of how many REF and ALT alleles we have at
 > :beginner: **An important note about additive genetic variance**: It is important to bear in mind how the input genetic data for outlier or association models is being interpreted by the model. When dealing with many of these models (and input genotype files) the assumption is that the SNP effects are [additive](https://link.springer.com/referenceworkentry/10.1007/978-3-319-47829-6_5-1). This can be seen from, for example, the way we encode homozygous reference allele, heterozygous, and homozygous alternate allele as "0", "1", and "2" respectively in a BayPass input genofile. For the diploid organism (with two variant copies for each allele) one copy of a variant (i.e. heterozygous) is assumed to have half the effect of having two copies. However, what if the locus in question has dominance effects? This would mean the heterozygous form behaves the same as the homozygous dominant form, and it would be more appropriate to label these instead as "0", "0", "1". But with thousands, if not millions of (most likely) completely unknown variants in a dataset, how can we possibly know? The answer is we cannot. And most models will assume additive effects, because this the simplest assumption. However, by not factoring in dominance effects we could possible be missing many important functional variants, as Reynolds et al. [2021](https://www.nature.com/articles/s41588-021-00872-5) demonstrates. Genomics is full of caveats and pitfalls, which while providing new directions to explore can be a bit overwhelming. Remember, you selection analysis doesn't have to be exhaustive, just make sure it is as fit for purpose within your study design. There is so much going on in just one genome, there is no way you can analyse everything in one go. 
 
 
-Now let's set Bayescan to run. Using the ``nano bayescan_starling.sl`` we will create a slurm script and submit it to run using the command ``sbatch bayescan_starling.sl``. This should take approximately 1 hr to run. Currently everything is set to default, but read the manual if you want to understand what they mean and how to refine them if needed.
+Now let's set Bayescan to run. Using the ``nano bayescan_starling.sl`` we will create a slurm script and submit it to run using the command ``bash bayescan_starling.sh``. This should take approximately 1 hr to run. Currently everything is set to default, but read the manual if you want to understand what they mean and how to refine them if needed.
 
 ```
 #!/bin/bash -e
-#SBATCH --job-name=2023_04_14.bayescan_starling.sl
-#SBATCH --account=uoa02613
-#SBATCH --time=00-12:00:00
-#SBATCH --mem=5GB
-#SBATCH --output=%x_%j.errout
-#SBATCH --mail-user=katarina.stuart@auckland.ac.nz
-#SBATCH --mail-type=ALL
-#SBATCH --nodes=1
-#SBATCH --ntasks=1
-#SBATCH --cpus-per-task=8
-#SBATCH --profile task
-
-cd /nesi/nobackup/uoa02613/kstuart_projects/outlier_analysis/analysis/bayescan
 
 #load bayescan
-module load BayeScan/2.1-GCCcore-7.4.0
+module load quay.io/biocontainers/bayescan/2.0.1--h9f5acd7_4
 
 #run bayescan. 
-bayescan_2.1 ./starling_3populations.bs -od ./ -threads 8 -n 5000 -thin 10 -nbp 20 -pilot 5000 -burn 50000 -pr_odds 10
+bayescan2 ./starling_3populations.bs -od ./ -threads 2 -n 5000 -thin 10 -nbp 20 -pilot 5000 -burn 50000 -pr_odds 10
 ```
  
 Identify outliers:
 
 ```
-module load R/4.1.0-gimkl-2020a
 R
 library(ggplot2)
-setwd("/nesi/nobackup/uoa02613/kstuart_projects/outlier_analysis/analysis/bayescan")
+setwd("/home/ubuntu/outlier_analysis/analysis/bayescan")
 source("/opt/nesi/CS400_centos7_bdw/BayeScan/2.1-GCCcore-7.4.0/R\ functions/plot_R.r")
 outliers.bayescan=plot_bayescan("starling_3population_fst.txt",FDR=0.05)
 outliers.bayescan
@@ -599,11 +579,10 @@ awk 'FNR==NR{a[$1];next} (($4) in a)' bayescan_outliers_numbers.txt starling_3po
 Bayescane Log Plot, colouring the outliers in a different colour.
 
 ```
-module load R/4.1.0-gimkl-2020a
 R
 library(ggplot2)
 library(dplyr)
-setwd("/nesi/nobackup/uoa02613/kstuart_projects/outlier_analysis/analysis/bayescan")
+setwd("/home/ubuntu/outlier_analysis/analysis/bayescan")
 
 bayescan.out<- read.table("starling_3population_fst.txt", header=TRUE)
 bayescan.out <- bayescan.out %>% mutate(ID = row_number())
@@ -663,27 +642,16 @@ manipulate file so it has baypass format, numbers set for plink output file and 
 tail -n +2 starling_3populations.frq.strat | awk '{ $9 = $8 - $7 } 1' | awk '{print $7,$9}' | tr "\n" " " | sed 's/ /\n/6; P; D' > starling_3populations_baypass.txt
 ```
 
-Now we can run Baypass by creating a slurm script ``baypass1_starling.sl``, which should run for about 5 minutes.
+Now we can run Baypass by creating a script ``baypass1_starling.sl``, which should run for about 5 minutes.
 
 ```
 #!/bin/bash -e
-#SBATCH --job-name=2023_04_14.baypass1_starling.sl
-#SBATCH --account=uoa02613
-#SBATCH --time=00-12:00:00
-#SBATCH --mem=5GB
-#SBATCH --output=%x_%j.errout
-#SBATCH --mail-user=katarina.stuart@auckland.ac.nz
-#SBATCH --mail-type=ALL
-#SBATCH --nodes=1
-#SBATCH --ntasks=1
-#SBATCH --cpus-per-task=4
-#SBATCH --profile task
 
-module load BayPass/2.31-intel-2022a
+module load quay.io/biocontainers/baypass/2.31--h1c9e865_2
 
-cd /nesi/nobackup/uoa02613/kstuart_projects/outlier_analysis/analysis/baypass
+cd /home/ubuntu/outlier_analysis/analysis/baypass
 
-i_baypass -npop 3 -gfile ./starling_3populations_baypass.txt -outprefix starling_3populations_baypass -nthreads 4
+g_baypass -npop 3 -gfile ./starling_3populations_baypass.txt -outprefix starling_3populations_baypass -nthreads 4
 ```
 
 Running in R to make the anapod data. First let's quickly download the utils we need.
