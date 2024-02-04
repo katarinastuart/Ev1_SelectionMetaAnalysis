@@ -125,6 +125,12 @@ vcftools --vcf $VCF --plink --out starling_3populations.plink
 
 # Convert PLINK to BED
 plink --file starling_3populations.plink --make-bed --noweb --out starling_3populations
+
+#Just in case we have an issue with the PLINK module
+cp $DIR/workshop_material/Ev1_SelectionMetaAnalysis/workshop_files/backup_files/starling_3populations.bed .
+cp $DIR/workshop_material/Ev1_SelectionMetaAnalysis/workshop_files/backup_files/starling_3populations.bim .
+cp $DIR/workshop_material/Ev1_SelectionMetaAnalysis/workshop_files/backup_files/starling_3populations.fam .
+cp $DIR/workshop_material/Ev1_SelectionMetaAnalysis/workshop_files/backup_files/starling_3populations.log .
 ```
 
 
@@ -499,7 +505,7 @@ PARSER_FORMAT=VCF
 # Only output SNPs with a phred-scaled quality of at least: 
 VCF_PARSER_QUAL_QUESTION=
 # Select population definition file:
-VCF_PARSER_POP_FILE_QUESTION=/home/ubuntu/outlier_analysis/data/starling_3populations_metadata_INDPOP.txt 
+VCF_PARSER_POP_FILE_QUESTION=/home/ubuntu/outlier_analysis/data/starling_3populations_metadata_INDPOP.txt
 # What is the ploidy of the data?
 VCF_PARSER_PLOIDY_QUESTION=DIPLOID
 # Do you want to include a file with population definitions?
@@ -577,10 +583,10 @@ bayescan2 ./starling_3populations.bs -od ./ -threads 2 -n 5000 -thin 10 -nbp 20 
 Ordinarily we would run this as a slurm script for about 1 hr, but for today's workshop we have prebaked files located in ``/home/ubuntu/outlier_analysis/backup_files/``. Let's copy them over into our Bayescan analysis directory.
 
 ```
-cp $DIR/backup_files/starling_3population_AccRte.txt .
-cp $DIR/backup_files/starling_3population_Verif.txt .
-cp $DIR/backup_files/starling_3population_fst.txt .
-cp $DIR/backup_files/starling_3population.sel .
+cp $DIR/workshop_material/Ev1_SelectionMetaAnalysis/workshop_files/backup_files/starling_3population_AccRte.txt .
+cp $DIR/workshop_material/Ev1_SelectionMetaAnalysis/workshop_files/backup_files/starling_3population_Verif.txt .
+cp $DIR/workshop_material/Ev1_SelectionMetaAnalysis/workshop_files/backup_files/starling_3population_fst.txt .
+cp $DIR/workshop_material/Ev1_SelectionMetaAnalysis/workshop_files/backup_files/starling_3population.sel .
 ```
  
 Identify outliers:
@@ -589,7 +595,7 @@ Identify outliers:
 R
 library(ggplot2)
 setwd("/home/ubuntu/outlier_analysis/analysis/bayescan")
-source("/home/ubuntu/outlier_analysis/backup_files/plot_R.r")
+source("/home/ubuntu/outlier_analysis/workshop_material/Ev1_SelectionMetaAnalysis/workshop_files/backup_files/plot_R.r")
 outliers.bayescan <- plot_bayescan("starling_3population_fst.txt", FDR = 0.05)
 outliers.bayescan
 write.table(outliers.bayescan, file = "bayescan_outliers.txt")
@@ -604,6 +610,7 @@ write.table(outliers.bayescan, file = "bayescan_outliers.txt")
 And finally, let's do a quick check of convergence. For more information please refer to [this documentation](https://evomics.org/wp-content/uploads/2016/01/BayeScan_BayeScEnv_exercises.pdf).
 
 ```
+install.packages("coda")
 library(coda)
 chain<-read.table("starling_3population.sel",header=TRUE)
 chain<-chain[-c(1)]
@@ -629,7 +636,7 @@ awk '{print $2}' bayescan_outliers.txt > bayescan_outliers_numbers.txt
 Create a list of outlier SNPs by matching the values in column 1 of the outliers list with those in column 4 of the entire SNP data list.
 
 ```
-awk 'FNR==NR{a[$1];next} (($4) in a)' bayescan_outliers_numbers.txt starling_3populations_SNPs.txt   | cut -f3 > bayescan_outlierSNPIDs.txt
+awk 'FNR==NR{a[$1];next} (($4) in a)' bayescan_outliers_numbers.txt ../starling_3populations_SNPs.txt   | cut -f3 > bayescan_outlierSNPIDs.txt
 ```
 
 Create a Bayescan log-plot and color the outliers in a different color.
@@ -637,6 +644,7 @@ Create a Bayescan log-plot and color the outliers in a different color.
 ```
 R
 library(ggplot2)
+install.packages("dplyr")
 library(dplyr)
 setwd("/home/ubuntu/outlier_analysis/analysis/bayescan")
 
