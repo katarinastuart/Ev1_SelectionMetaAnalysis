@@ -1,0 +1,16 @@
+
+VCFtools - 0.1.15
+(C) Adam Auton and Anthony Marcketta 2009
+
+Parameters as interpreted:
+	--vcf /home/kstu465/outlier_analysis/data/starling_3populations.recode.vcf
+	--out starling_3populations.plink
+	--plink
+
+After filtering, kept 39 out of 39 Individuals
+Writing PLINK PED and MAP files ... 
+
+Unrecognized values used for CHROM: starling4 - Replacing with 0.
+Done.
+After filtering, kept 5007 out of a possible 5007 Sites
+Run Time = 0.00 seconds

@@ -1,0 +1,32 @@
+PLINK v1.90b6.16 64-bit (19 Feb 2020)
+Options in effect:
+  --file starling_3populations.plink
+  --make-bed
+  --noweb
+  --out starling_3populations
+
+Hostname: wbn003
+Working directory: /scale_wlg_persistent/filesets/home/kstu465/outlier_analysis/data
+Start time: Wed Aug  9 10:14:51 2023
+
+Note: --noweb has no effect since no web check is implemented yet.
+Random number seed: 1691532891
+128824 MB RAM detected; reserving 64412 MB for main workspace.
+Scanning .ped file... done.
+Performing single-pass .bed write (5007 variants, 39 people).
+--file: starling_3populations-temporary.bed +
+starling_3populations-temporary.bim + starling_3populations-temporary.fam
+written.
+5007 variants loaded from .bim file.
+39 people (0 males, 0 females, 39 ambiguous) loaded from .fam.
+Ambiguous sex IDs written to starling_3populations.nosex .
+Using 1 thread (no multithreaded calculations invoked).
+Before main variant filters, 39 founders and 0 nonfounders present.
+Calculating allele frequencies... done.
+Total genotyping rate is 0.723331.
+5007 variants and 39 people pass filters and QC.
+Note: No phenotypes present.
+--make-bed to starling_3populations.bed + starling_3populations.bim +
+starling_3populations.fam ... done.
+
+End time: Wed Aug  9 10:14:51 2023
