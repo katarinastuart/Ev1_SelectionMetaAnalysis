@@ -718,9 +718,14 @@ cp $DIR/data/starling_3populations.plink.log .
 Run the population-based allele frequency calculations.
 
 ```
-module load PLINK/1.09b6.16 
+#load module
+module load quay.io/biocontainers/plink/1.90b6.21--hec16e2b_2/module
 
+#calculate allele frequencies for each of the three populations
 plink --file starling_3populations.plink --allow-extra-chr --freq counts --family --out starling_3populations
+
+#Just in case we have an issue with the PLINK module
+cp $DIR/workshop_material/Ev1_SelectionMetaAnalysis/workshop_files/backup_files/starling_3populations.frq.strat .
 ```
 
 Manipulate file so it has BayPass format, numbers set for PLINK output file, and population number for column count.
