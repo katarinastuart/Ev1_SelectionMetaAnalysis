@@ -877,6 +877,8 @@ abline(h=20, col="red")
 plot(covaux.snp.res.mass$M_Beta,xlab="SNP",ylab=expression(beta~"coefficient"))
 plot(covaux.snp.xtx.mass$M_XtX, xlab="SNP",ylab="XtX corrected for SMS")
 dev.off()
+
+q()
 ```
 
 <img src="/images/Baypass.PNG" alt="Baypass output" width="500"/>
@@ -897,7 +899,7 @@ wc -l starling_3populations_baypass_wing_BF20.txt
 Filter the data sets for SNPS above BFmc threshold. These are out outlier SNPs that are associated with wingspan. 
 
 ```
-awk 'FNR==NR{a[$2];next} (($4) in a)' starling_3populations_baypass_wing_BF20.txt starling_3populations_SNPs.txt | cut -f3 > baypass_wingspan_outlierSNPIDs.txt
+awk 'FNR==NR{a[$2];next} (($4) in a)' starling_3populations_baypass_wing_BF20.txt ../starling_3populations_SNPs.txt | cut -f3 > baypass_wingspan_outlierSNPIDs.txt
 
 comm -12 <(sort baypass_wingspan_outlierSNPIDs.txt) <(sort baypass_outlierSNPIDs.txt) > double_outliers.txt
 
@@ -914,8 +916,8 @@ Now we will make an UpSet plot to compare the overlap of outliers detected over 
 
 ```
 cd $DIR/analysis/summary
-ln -s $DIR/analysis/pcadapt/pcadapt_outliersSNPIDs.txt .
-ln -s $DIR/analysis/vcftools_fst/vcftools_outliersSNPIDs.txt .
+ln -s $DIR/analysis/pcadapt/pcadapt_outlierSNPIDs.txt .
+ln -s $DIR/analysis/vcftools_fst/vcftoolsfst_outlierSNPIDs.txt .
 ln -s $DIR/analysis/bayescan/bayescan_outlierSNPIDs.txt .
 ln -s $DIR/analysis/baypass/baypass_outlierSNPIDs.txt .
 ln -s $DIR/analysis/baypass/baypass_wingspan_outlierSNPIDs.txt .
@@ -927,8 +929,8 @@ Now we have a copy of all the SNP IDs for each of our outlier analyses, let's us
 R
 setwd("/home/ubuntu/outlier_analysis/analysis/summary")
 
-pcadapt <- scan("pcadapt_outliersSNPIDs.txt", what = "", quiet = TRUE)
-vcftools <- scan("vcftools_outliersSNPIDs.txt", what = "", quiet = TRUE)
+pcadapt <- scan("pcadapt_outlierSNPIDs.txt", what = "", quiet = TRUE)
+vcftools <- scan("vcftoolsfst_outlierSNPIDs.txt", what = "", quiet = TRUE)
 bayescan <- scan("bayescan_outlierSNPIDs.txt", what = "", quiet = TRUE)
 baypass <- scan("baypass_outlierSNPIDs.txt", what = "", quiet = TRUE)
 baypass_wing <- scan("baypass_wingspan_outlierSNPIDs.txt", what = "", quiet = TRUE)  
@@ -952,6 +954,8 @@ upset(
   nintersects = 11
 ) 
 dev.off() 
+
+q()
 ```
 
 <img src="/images/outliers_upsetplot.PNG" alt="upset plot of outlier overlaps" width="500"/>
