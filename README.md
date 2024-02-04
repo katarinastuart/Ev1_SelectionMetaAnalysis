@@ -29,34 +29,34 @@ A version of this workshop that has been adapted to run directly on New Zealand 
 
 <h2>A brief introduction to Genetic Outlier and Association Analysis</h2>
 
-When we look through a genome to try find loci that are under divergent selection, we often conduct what is called outlier or association analyses. **Outlier analysis** requires just knowledge of the genetics of your samples (plus sample metadata, for example population groupings), and tries to find loci that behave very differently from the underlying patterns across the genome (with the assumption being that the rest of the genome represents patterns of neutral genetic diveristy)<sup>A</sup>. Meanwhile **association analysis** require some sort of covariate data, and tests whether there are any genetic variants statistically associated with this new data (you may have heard the term [GWAS](https://www.genome.gov/genetics-glossary/Genome-Wide-Association-Studies)). This covariate data can come in the form of phenotype data (e.g. morphology, disease status, physiology measures), or could be spatial (e.g. environmental, climate). Association tests look for sites in the genome where the precense or absence of a variant is highly correlated with the values in the co-variate data, usually through some regression type analysis.
+When we look through a genome to try to find loci that are under divergent selection, two common apporaches are outlier analysis and association analyses. **Outlier analysis** requires just knowledge of the genetics of your samples (plus sample metadata, for example, population groupings) and tries to find loci that behave very differently from the underlying patterns across the genome (with the assumption being that the rest of the genome represents patterns of neutral genetic diveristy)<sup>A</sup>. Meanwhile **association analysis** requires some sort of covariate data, and tests whether there are any genetic variants statistically associated with this new data (you may have heard the term [GWAS](https://www.genome.gov/genetics-glossary/Genome-Wide-Association-Studies)). This covariate data can come in the form of phenotype data (e.g., morphology, disease status, physiology measures) or could be spatial (e.g., environmental, climate). Association tests look for sites in the genome where the presence or absence of a variant is highly correlated with the values in the co-variate data, usually through some regression-type analysis.
 
-Throughout this vignette I will refer to outlier and association analysis collectively as selection analysis. There are a lot of programs that exist currently. You can find a very long (though not exhaustive) list of them [here](https://bioinformaticshome.com/tools/gwas/gwas.html). 
+Throughout this vignette, I will collectively refer to outlier and association analysis as selection analysis. There are a lot of programs that exist currently. You can find a very long (though not exhaustive) list [here](https://bioinformaticshome.com/tools/gwas/gwas.html). 
 
-This vignette still start by covering some very simple outlier analyses:
+This vignette will start by covering some very simple outlier analyses:
 <ul>
-<li><a href="https://bcm-uga.github.io/pcadapt/articles/pcadapt.html"><b>PCAdapt</b></a>, a program that can depect genetic marker outliers without having population<sup>B</sup> designations, using a Principle Component Analysis (PCA) approach.</li>
-<li><a href="GBIF"><b>F<sub>ST</sub></b></a> outlier analysis, an approach that uses pairwise comparisons between two populations and the fixation index metric to assess each genetic marker.</li>
+<li><a href="https://bcm-uga.github.io/pcadapt/articles/pcadapt.html"><b>PCAdapt</b></a> can detect genetic marker outliers without having population<sup>B</sup> designations using a Principle Component Analysis (PCA) approach.</li>
+<li><a href="GBIF"><b>F<sub>ST</sub></b></a> outlier analysis is an approach that uses pairwise comparisons between two populations and the fixation index metric to assess each genetic marker.</li>
 </ul>
 
-Next we will conduct some more advanced outlier analysis:
+Next, we will conduct some more advanced outlier analyses:
 <ul>
-<li><a href="https://bcm-uga.github.io/pcadapt/articles/pcadapt.html"><b>Bayescan</b></a>, a program.</li>
-<li><a href="GBIF"><b>Baypass</b></a>, a program that elaborates on the bayenv model (another popular association analysis program).</li>
+<li><a href="https://bcm-uga.github.io/pcadapt/articles/pcadapt.html"><b>Bayescan</b></a>looks for differences in allele frequencies between populations to search for outliers.</li>
+<li><a href="GBIF"><b>Baypass</b></a> elaborates on the bayenv model (another popular association analysis program) and allows you to conduct many different types of genetic outlier and genetic association tests.</li>
 </ul>
 
-We'll cover the pre-processing of program specific input files, how to run the programs, how to visualise the output and also in some cases we'll need to take extra steps to map the genetic markers of interest back to the SNP data.  
+We will cover the pre-processing of program-specific input files, how to run the programs, how to visualise the output, and in some cases we'll need to take extra steps to map the genetic markers of interest back to the SNP data.  
 
-> :beginner: **Reduced representation verses whole genome sequencing**
+> :beginner: **Reduced representation versus whole genome sequencing (WGS)**
 >
-> Completing outlier analysis is possible and often done on reduced representation data. It is important to remember how your genome coverage (the number of genome variant sites / the genome length <sup>C</sup>) will affect your results and interpretation. Often with WGS data, you will see well resolved 'peaks' with a fairly smooth curve of points leading up to it either side. From this we often infer that the highest point is the genetic variant of interest, and the other sites either side of that exhibit signals of selection because they reside close to, and thus are linked, to the variant of interest. However, consider that even in WGS data, unless we have every single genetic variant represented (which may not be the case, depending on our variant calling and filtering parameters) it is possible that the genetic variant of interest that we have identified is not the main one, but is simply another neighbouring linked SNP to one that is not represented in the data. This problem becomes even more relevant with reduced representation sequencing (RRS), for which the genome coverage may be extremely patchy<sup>C</sup>. Thus with all outlier analysis, but especially so for those using RRS data, remember that your flagged outliers are not exhaustive, and may themselves only be liked to the variant that is truely under selection.
+> Outlier analysis is often done on reduced representation data. It is important to remember how your genome coverage (the number of genome variant sites / the genome length <sup>C</sup>) will affect your results and interpretation. Often with WGS data, you will see well -resolved 'peaks' with a fairly smooth curve of points leading up to it on either side. From this, we often infer that the highest point is the genetic variant of interest and the sites on either side of the peak exhibit signals of selection because they reside close to, and thus are linked to, the true variant of interest. However, consider that even in WGS data, unless we have every single genetic variant represented (which may not be the case, depending on our variant calling and filtering parameters), it is possible that the genetic variant of interest that we have identified is not the main one, but is simply another neighboring linked SNP to one that is not represented in the data. This problem becomes even more relevant with reduced representation sequencing (RRS), for which the genome coverage may be extremely patchy <sup>C</sup>. Thus with all outlier analysis, but especially so for those using RRS data, remember that your flagged outliers are not exhaustive and may themselves only be liked to the variant that is truly under selection.
 
  
-<img src="/images/Manhattan_Hofmesiter_example.PNG" alt="Manhattan plot example from https://doi.org/10.1111/mec.17195" width="700"/>
+<img src="/images/Manhattan_Hofmesiter_example.PNG" alt="Manhattan plot of the association between Fst and loci along a genome. Manhattan plot example from https://doi.org/10.1111/mec.17195" width="700"/>
 
 
 
-## Define you working directory for this project, and the VCF file location:
+## Define your working directory for this project, and the VCF file location:
 
 ```
 mkdir /home/ubuntu/outlier_analysis
@@ -64,7 +64,7 @@ DIR=/home/ubuntu/outlier_analysis
 cd $DIR
 ```
 
-Our data tree will look like:
+Our data tree will look like this:
 
 > outlier_analysis/ <br>
 > ├── analysis <br>
@@ -78,7 +78,7 @@ Our data tree will look like:
 > └── workshop_material <br>
 
 
-So lets set up our directories to match this
+So let's set up our directories to match this
 
 ```
 mkdir -p {analysis/{bayescan,baypass,pcadapt,summary,vcftools_fst},data,programs,workshop_material}
@@ -86,32 +86,44 @@ mkdir -p {analysis/{bayescan,baypass,pcadapt,summary,vcftools_fst},data,programs
 
 ## Project data
 
-The data provided in this workshop contains 5007 SNPs loci for across 39 individuals (13 individuals each from 3 different locations). There is some missingness (i.e. missing SNP calls) within this data.
+The data provided in this workshop contains 5007 SNPs loci for 39 individuals (13 individuals each from 3 different locations). This data has some missingness (i.e., missing SNP calls).
 
-There is also a metadata file, that contains the individuals unique IDs, their assigned populations, and a wingspan measurement for each individual. 
+There is also a metadata file containing the individual's unique IDs, assigned populations, and a wingspan measurement for each individual. 
 
 Let's grab this data from the project's git repository, place the data files into our ``data`` directory, and define the environmental variables ``VCF`` and ``METADATA`` with the locations of the genetic variant and metadata files respectively.
 
 ```
+# Enter data directory
 cd $DIR/workshop_material
+
+# Download required files to data directory
 git clone https://github.com/katarinastuart/Ev1_SelectionMetaAnalysis.git
 cp $DIR/workshop_material/Ev1_SelectionMetaAnalysis/workshop_files/* $DIR/data
+
+# Set environment variables
 VCF=$DIR/data/starling_3populations.recode.vcf
 METADATA=$DIR/data/starling_3populations_metadata.txt
 ```
 
 > :heavy_exclamation_mark: **Working with your own data** <br> 
 > <br>
-> Alternatively, you can also use your own data for this workshop. If so, it is a good idea to thin your SNP dataset down to roughly 5,000 SNPs to ensure compute times are not too long. If you have more than 50 individuals you may also want to reduce this too. If you would like to do this, just place your genetic variant and metadata file in the ``data`` directory and define ``VCF`` and ``METADATA`` based on their names. <br>
+> Alternatively, you can also use your own data for this workshop. If so, it is a good idea to thin your SNP dataset down to roughly 5,000 SNPs to ensure compute times are not too long. If you have more than 50 individuals, you may also want to reduce this. If you would like to do this, place your genetic variant and metadata file in the ``data`` directory and define ``VCF`` and ``METADATA`` based on their names. <br>
 
 
 Across this workshop, we will need the genetic data to be in several different formats. Let's prepare that now. First we convert the VCF to PLINK, and then to BED.
 
 ```
+# Enter data directory
 cd $DIR/data
+
+# Load modules
 module load quay.io/biocontainers/vcftools/0.1.15--he941832_2/module
 module load quay.io/biocontainers/plink/1.90b6.21--hec16e2b_2/module
+
+# Convert VCF to PLINK
 vcftools --vcf $VCF --plink --out starling_3populations.plink
+
+# Convert PLINK to BED
 plink --file starling_3populations.plink --make-bed --noweb --out starling_3populations
 ```
 
@@ -121,7 +133,7 @@ plink --file starling_3populations.plink --make-bed --noweb --out starling_3popu
 
 PCAdapt uses an ordination approach to find sites in a data set that are outliers with respect to background population structure. The PCAdapt manual is available [here](https://bcm-uga.github.io/pcadapt/articles/pcadapt.html). 
 
-CITE: Privé, F., Luu, K., Vilhjálmsson, B. J., & Blum, M. G.B. (2020). Performing highly efficient genome scans for local adaptation with R package pcadapt version 4. Molecular Biology and Evolution.
+Citation: Privé, F., Luu, K., Vilhjálmsson, B. J., & Blum, M. G. B. (2020). Performing Highly Efficient Genome Scans for Local Adaptation with R Package pcadapt Version 4. Mol Biol Evol, 37(7), 2153-2154. https://doi.org/10.1093/molbev/msaa053
 
 
 First, let's install PCAdapt and set your working directory.
@@ -142,7 +154,7 @@ starling_bed <- "/home/ubuntu/outlier_analysis/data/starling_3populations.bed"
 starlings_pcadapt <- read.pcadapt(starling_bed, type = "bed")
 ```
 
-Produce K plot
+Produce K-plot.
 
 ```
 starlings_pcadapt_kplot <- pcadapt(input = starlings_pcadapt, K = 20)
@@ -153,7 +165,7 @@ dev.off()
 
 <img src="/images/pcadapt_kplot.PNG" alt="k plot" width="400"/>
 
-K value of 3 is most appropriate, as this is the value of K after which the curve starts to flatten out more.
+A K value of 3 is most appropriate, as this is the value of K after which the curve starts to flatten out more.
 
 ```
 starlings_pcadapt_pca <- pcadapt(starlings_pcadapt, K = 3)
@@ -174,7 +186,7 @@ summary(starlings_pcadapt_pca)
 > pvalues &nbsp;          5007  -none- numeric <br>
 > pass &nbsp;             4610  -none- numeric 
 
-Investigate axis projections:
+Investigate axis projections.
 
 ```
 poplist.names <- c(rep("Lemon", 13),rep("Warrnambool", 13),rep("Nowra", 13))
@@ -195,11 +207,11 @@ Ignore the warning:
 
 <img src="/images/pcadapt_proj1.PNG" alt="projection axis1 axis2" width="300"/> <img src="/images/pcadapt_proj2.PNG" alt="projection axis6 axis7" width="300"/>
 
-Investigate manhattan and Q-Qplot:
+Investigate Manhattan and Q-Qplot.
 
-> :beginner: **Manhattan plots** are a way to visualise the GWAS (genome-wide association study) p-values (or other statistical values) at each SNP locus along the genome
+> :beginner: **Manhattan plots** are a way to visualize the GWAS (genome-wide association study) p-values (or other statistical values) at each SNP locus along the genome
 
-> :beginner: **Q-Qplots plots** are just a quick way to visually check if your residuals are normally distributed. Check out more information [here](https://data.library.virginia.edu/understanding-q-q-plots/).
+> :beginner: **Q-Qplots plots** are a quick way to check if your residuals are normally distributed. Check out more information [here](https://data.library.virginia.edu/understanding-q-q-plots/).
 
 ```
 pdf("pcadapt_starlings_manhattan.pdf")
@@ -213,7 +225,7 @@ dev.off()
 
 <img src="/images/pcadapt_manhattan.PNG" alt="Manhattan" width="400"/> <img src="/images/pcadapt_qq.PNG" alt="Q-Qplot" width="400"/>
 
-Plotting and correcting the pvalues
+Plotting and adjusting the p-values
 
 ```
 starling_pcadapt_pvalues <- as.data.frame(starlings_pcadapt_pca$pvalues)
@@ -242,7 +254,7 @@ length(outliers)
 > &emsp;
 > [1] 3
 
-After this, we will be jumping out of R and back into the command line by using the command: 
+After this, we will jump out of R and back into the command line by using the following command: 
 
 ```
 q()
@@ -250,28 +262,28 @@ q()
 
 Mapping Outliers: PCAdapt
 
-finding the SNP ID of the outlier variants
+Find the SNP ID of the outlier variants.
 
 ```
 cd $DIR/analysis
 ```
 
-The first thing we will do is create list of SNPs in VCF, assign line numbers that can be used to find matching line numbers in outliers (SNP ID is lost in PCadapt & Bayescan, line numbers used as signifiers). 
+The first thing we will do is create a list of SNPs in VCF, and then assign line numbers that can be used to find matching line numbers in outliers (SNP IDs are lost in PCadapt & Bayescan, line numbers are used as signifiers). 
 
-We create this in the ``analysis`` folder because we will use it for more than just mapping the outlier SNPs for PCAdapt.
+We create this in the ``analysis`` directory because we will use it for more than just mapping the outlier SNPs for PCAdapt, we will also need it on day 2 for BayeScan and BayPass.
 
 ```
 grep -v "^#" $DIR/data/starling_3populations.recode.vcf | cut -f1-3 | awk '{print $0"\t"NR}' > starling_3populations_SNPs.txt
 ```
 
-Now let's jump back into the ``pcadapt`` directory to contiue working with our outliers. We grab column 2 of the outlier file using the ``AWK`` command, which contain the number of the outliers
+Now let us jump back into the  ``pcadapt`` directory to continue working with our outliers. We select column 2 of the outlier file using the ``AWK`` command, which contains the number of outliers.
 
 ```
 cd $DIR/analysis/pcadapt
 awk '{print $2}' starlings_pcadapt_outliers.txt > starlings_pcadapt_outliers_numbers.txt
 ```
 
-We now make a list of outlier SNPS ID's
+Make a list of outlier SNPS ID's.
 
 ```
 awk 'FNR==NR{a[$1];next} (($4) in a)' starlings_pcadapt_outliers_numbers.txt ../starling_3populations_SNPs.txt   | cut -f3 > pcadapt_outlierSNPIDs.txt
@@ -289,25 +301,28 @@ head pcadapt_outlierSNPIDs.txt
 
 The VCFTools manual is available [here](https://vcftools.sourceforge.net/man_latest.html).
 
-CITE: Danecek P, Auton A, Abecasis G, Albers CA, Banks E, DePristo MA, Handsaker RE, Lunter G, Marth GT, Sherry ST et al. 2011 The variant call format and VCFtools. Bioinformatics 27 2156–2158. (doi:10.1093/bioinformatics/btr330)
+Citation: Danecek, P., Auton, A., Abecasis, G., Albers, C. A., Banks, E., DePristo, M. A., Handsaker, R. E., Lunter, G., Marth, G. T., Sherry, S. T., McVean, G., Durbin, R., & Genomes Project Analysis, G. (2011). The variant call format and VCFtools. Bioinformatics, 27(15), 2156-2158. https://doi.org/10.1093/bioinformatics/btr330
 
-Fst outliers will allow us to identify SNPs that behave abnormally in pairwise comparisons between populations.
+Fst outliers help us to identify SNPs that behave abnormally in pairwise comparisons between populations.
 
-The first things we need to do is use our metadata file (currently defined by the environmental variable ``METADATA``) to make three individual files containing just the list of individuals in each of the populations. We can do this by subseting our sample metadata file, using the command ``grep`` to grab lines that match each population's name, and then using ``awk`` to keep only the first column of metadta, i.e. the sample names.
+We first need to use our metadata file (currently defined by the environmental variable METADATA) to make three individual files containing only the list of individuals in each population. We can do this by subsetting our sample metadata file, using the grep command to select lines that match each population's name, and then using awk to keep only the first column of metadata, i.e., the sample names.
 
 ```
+# Load modules
 module load quay.io/biocontainers/vcftools/0.1.15--he941832_2/module
 ```
 
 ```
+# Enter data directory
 cd $DIR/data
 
+# Subset metadata
 grep "Lemon" $METADATA | awk '{print $1}' > individuals_Lemon.txt
 grep "War" $METADATA | awk '{print $1}' > individuals_War.txt
 grep "Nowra" $METADATA | awk '{print $1}' > individuals_Nowra.txt
 ```
 
-Now we can pick two populations to compare. Let's work with Lemon (short for Lemon Tree, QLD, AU) and War (short for Warnambool, VIC, AU), and so a SNP-based Fst comparison.
+Now we can pick two populations to compare. Let's work with Lemon (short for Lemon Tree, QLD, AU) and War (short for Warnambool, VIC, AU) and perform an SNP-based Fst comparison.
 
 ```
 cd $DIR/analysis/vcftools_fst
@@ -324,7 +339,7 @@ head -n 5 lemon_war.weir.fst
 > starling4       151332  0.0524489<br>
 > starling4       227887  0.0569961<br>
 
-The important column is column 5: the Weighted Fst, from [Weir and Cockerham’s 1984 publication](https://www.jstor.org/stable/2408641). This corrects for INFO NEEDED.
+The important column is column 5: the Weighted Fst, from [Weir and Cockerham’s 1984 publication](https://www.jstor.org/stable/2408641). 
 
 ```
 wc -l lemon_war.weir.fst 
@@ -334,18 +349,18 @@ wc -l lemon_war.weir.fst
 > &emsp;
 > 5008
 
-Notice how there are as many lines as there are SNPs in the data set, plus one for a header. It is always a good idea to check your output, and make sure everything looks as you expect it to!
+Notice how there are as many lines as there are SNPs in the data set, plus one for a header. It is always a good idea to check your output to ensure everything looks as expected!
 
-Next, instead of calculating pairwise populaiton differentiation on a SNP by SNP basis, we will be usiing a sliding window approach. The ``--fst-window-size 50000`` refers to the window size of the genome (in bsae pairs) in which we are calculating one value: all SNPs within this window are used to caluclate Fst. The ``--fst-window-step`` option indicates how many base pairs the window is moving down the genome before calculating Fst for the second window, and then the third, and so on. 
+Next, instead of calculating pairwise population differentiation on an SNP-by-SNP basis, we will use a sliding window approach. The ``--fst-window-size 50000`` refers to the window size of the genome (in base pairs) in which we are calculating one value: all SNPs within this window are used to calculate Fst. The ``--fst-window-step`` option indicates how many base pairs the window is moving down the genome before calculating Fst for the second window, then the third, and so on. 
 
-> **Warning**
+> **Warning about sliding windows**
 > &emsp;
-> These sliding windows only work on ordered SNPs on the same chromosome/scaffold/contig. If you data is not set up like this (i.e. all your SNPs are on a single pseudo chromosome) then this method is not appropriate for your data, as it will be making an assumption about where the SNPs are located with respect to one another.
+> These sliding windows only work on ordered SNPs on the same chromosome/scaffold/contig. If your data is not set up like this (i.e., all your SNPs are on a single pseudo-chromosome), then this method is not appropriate for your data, as it will make an assumption about where the SNPs are located with respect to one another.
 
 ```
 vcftools --vcf $VCF --fst-window-size 50000 --fst-window-step 10000 --weir-fst-pop $DIR/data/individuals_Lemon.txt --weir-fst-pop $DIR/data/individuals_War.txt --out lemon_war
 
-head lemon_war.windowed.weir.fst
+head -n 5 lemon_war.windowed.weir.fst
 ```
 > :heavy_check_mark: **Output** <br>
 > &emsp;
@@ -366,11 +381,11 @@ wc -l lemon_war.windowed.weir.fst
 > &emsp;
 > 10838
 
-Notice the line count is different from the SNP-based Fst comparison; there are more lines in the sliding window based Fst comparison. This is because there are more sliding windows across the chromosome in this data set than there are SNPs. Consider which of these steps is better for your data: in low density SNP datasets, the sliding window approach might not be the best to use.
+Notice the line count is different from the SNP-based Fst comparison; there are more lines in the sliding window-based Fst comparison. This is because there are more sliding windows across the chromosome in this data set than there are SNPs. Consider which of these steps is better for your data: the sliding window approach might not be the best in low-density SNP datasets.
 
-Now let's plot the Fst across the chromosome. To do this we will add line numbers on our Fst file that will be used to order the Fst measurements across the x-axis of our manhattan plot.
+Now let us plot the Fst across the chromosome. To do this, we will add line numbers on our Fst file that will be used to order the Fst measurements across the x-axis of our Manhattan plot.
 
-> :beginner: **X-axis values** in the following plot are done y using each ourlier window's line number, as they are in order along the genome. Ourlier windows are equally spces, and so line numbers are sufficient to capture the patterns along the genome. Consider that if you are plotting Fst values for SNPs (rather than windows), they may not be equally spaced along the genome and so SNP position may need to be used to make your manhattan plots.
+> :beginner: **X-axis values** in the following plot are done using each outlier window's line number, as they are in order along the genome. Outlier windows are equally spaced, so line numbers are sufficient to capture the patterns along the genome. Consider that if you are plotting Fst values for SNPs (rather than windows), they may not be equally spaced along the genome, so SNP position may need to be used to make your Manhattan plots.
 
 ```
 awk '{print $0"\t"NR}' ./lemon_war.windowed.weir.fst  > lemon_war.windowed.weir.fst.edit
@@ -393,14 +408,16 @@ quantile(windowed_fst$WEIGHTED_FST, probs = c(.95, .99, .999))
 > 0.1948850 0.3501600 0.5741306<br>
 
 
-Choose the quantile threshold above which SNPs will be classified as outliers. Below, we chose 99% (i.e. the top 1% of SNP windows).
+Choose the quantile threshold above which SNPs will be classified as outliers. In the code block below, we chose 99% (i.e., the top 1% of SNP windows).
 
 ```
 pdf("fst_starlings_windowed.pdf", width=10, height=5)
 ggplot(windowed_fst, aes(x=X1, y=WEIGHTED_FST)) + 
-geom_point() + 
-theme_classic() +
-geom_hline(yintercept=0.35, linetype="dashed", color = "red")
+  geom_point() + 
+  geom_hline(yintercept=0.35, linetype="dashed", color = "red")+
+  labs(x = "Window Number") +
+  theme_classic()
+
 dev.off()
 
 q()
@@ -408,7 +425,7 @@ q()
 
 <img src="/images/Fst_Windowed.PNG" alt="Windowed Fst" width="600"/>
 
-Finally, we will generate a list of outlier SNP IDs. We do this by grabbing all of the SNPs located in the outlier windows. 
+Finally, we will generate a list of outlier SNP IDs. We do this by selecting all SNPs located in the outlier windows.
 
 ```
 cd $DIR/analysis/vcftools_fst
@@ -420,8 +437,11 @@ wc -l lemon_war.windowed.outliers
 > 107 lemon_war_fst.windowed.outliers
 
 ```
+#Identify the regions of the genome that were found to be outliers and subset the VCF file
 cut -f1-3 lemon_war.windowed.outliers > lemon_war.windowed.outliers.bed 
 vcftools --vcf $VCF --bed lemon_war.windowed.outliers.bed --out fst_outliers --recode
+
+#Create a list of outlier SNP IDs
 grep -v "#" fst_outliers.recode.vcf | awk '{print $3}' > vcftoolsfst_outlierSNPIDs.txt
 wc -l vcftoolsfst_outlierSNPIDs.txt
 ```
