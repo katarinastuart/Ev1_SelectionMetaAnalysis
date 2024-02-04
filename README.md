@@ -762,6 +762,9 @@ source("/home/ubuntu/outlier_analysis/programs/BayPass/baypass_utils.R")
 install.packages("ape")
 library("ape")
 
+install.packages("mvtnorm")
+library("mvtnorm")
+
 omega <- as.matrix(read.table("starling_3populations_baypass_mat_omega.out"))
 
 pi.beta.coef <- read.table("starling_3populations_baypass_summary_beta_params.out", header = TRUE)
@@ -776,7 +779,9 @@ q()
 We now have the simulated genetic data. We can find the XtX statistic threshold above which we will consider genetic sites an outlier.
 
 ```
-i_baypass -npop 3 -gfile G.btapods -outprefix G.btapods -nthreads 2
+cd $DIR/analysis/baypass
+
+g_baypass -npop 3 -gfile G.btapods -outprefix G.btapods -nthreads 2
 ```
 
 XtX calibration; get the pod XtX theshold
@@ -849,7 +854,7 @@ Now we can run the third and final BayPass job, which will let us know which SNP
 
 
 ```
-i_baypass -npop 3 -gfile starling_3populations_baypass.txt -efile pop_mean_wingspan.txt -scalecov -auxmodel -nthreads 4 -omegafile starling_3populations_baypass_mat_omega.out -outprefix starling_3populations_baypass_wing
+g_baypass -npop 3 -gfile starling_3populations_baypass.txt -efile pop_mean_wingspan.txt -scalecov -auxmodel -nthreads 4 -omegafile starling_3populations_baypass_mat_omega.out -outprefix starling_3populations_baypass_wing
 ```
 
 
