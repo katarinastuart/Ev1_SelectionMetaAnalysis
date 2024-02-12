@@ -974,6 +974,10 @@ OPTIONAL but PREFERRED: Reference genome that has been annotated and well scaffo
 
 Thank you to the <a href="https://ausevo.com/ECR_grants_2022/">AES ERC Networking Grant Scheme</a> and <a href="https://genetics.org.au/">GSA</a> for funding this project.
 
+Thank you to the <a href="https://www.nesi.org.nz/">New Zealand eScience Infrastructure (NeSI)</a> for helping to facilitate the New Zealand workshops.
+
+Thank you to the <a href="https://www.biocommons.org.au/">Australian BioCommons</a> and <a href="https://pawsey.org.au/">Pawsey</a> for helping to facilitate the Australian workshops.
+
 ## Footnotes
 <sup>A</sup> it is very important then to account for any population substructure. There are many different ways to approach this: refer to introduction slides for some guidance.<br>
 <sup>B</sup> I will say population for simplicity throughout this vignette. However, equally we can test for differences between sample sites, subpopulations, and other types of groupings. What counts as one 'group' of organisms will be dependent on your study system or study question. <br>
