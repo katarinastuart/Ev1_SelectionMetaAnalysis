@@ -125,12 +125,6 @@ vcftools --vcf $VCF --plink --out starling_3populations.plink
 
 # Convert PLINK to BED
 plink --file starling_3populations.plink --make-bed --noweb --out starling_3populations
-
-#Just in case we have an issue with the PLINK module
-cp $DIR/workshop_material/Ev1_SelectionMetaAnalysis/workshop_files/backup_files/starling_3populations.bed .
-cp $DIR/workshop_material/Ev1_SelectionMetaAnalysis/workshop_files/backup_files/starling_3populations.bim .
-cp $DIR/workshop_material/Ev1_SelectionMetaAnalysis/workshop_files/backup_files/starling_3populations.fam .
-cp $DIR/workshop_material/Ev1_SelectionMetaAnalysis/workshop_files/backup_files/starling_3populations.log .
 ```
 
 
@@ -147,7 +141,6 @@ First, let's install PCAdapt and set your working directory.
 ```
 R
 
-install.packages("pcadapt")
 library("pcadapt")
 
 setwd("/home/ubuntu/outlier_analysis/analysis/pcadapt/")
@@ -252,8 +245,6 @@ outliers <- which(starlings_pcadapt_padj < alpha)
 length(outliers)
 
 write.table(outliers, file="starlings_pcadapt_outliers.txt") 
-
-length(outliers)
 ```
 
 > :heavy_check_mark: **Output** <br>
@@ -610,7 +601,6 @@ write.table(outliers.bayescan, file = "bayescan_outliers.txt")
 And finally, let's do a quick check of convergence. For more information please refer to [this documentation](https://evomics.org/wp-content/uploads/2016/01/BayeScan_BayeScEnv_exercises.pdf).
 
 ```
-install.packages("coda")
 library(coda)
 chain<-read.table("starling_3population.sel",header=TRUE)
 chain<-chain[-c(1)]
@@ -644,7 +634,6 @@ Create a Bayescan log-plot and color the outliers in a different color.
 ```
 R
 library(ggplot2)
-install.packages("dplyr")
 library(dplyr)
 setwd("/home/ubuntu/outlier_analysis/analysis/bayescan")
 
@@ -759,10 +748,8 @@ R
 setwd("/home/ubuntu/outlier_analysis/analysis/baypass")
 source("/home/ubuntu/outlier_analysis/programs/BayPass/baypass_utils.R")
 
-install.packages("ape")
 library("ape")
 
-install.packages("mvtnorm")
 library("mvtnorm")
 
 omega <- as.matrix(read.table("starling_3populations_baypass_mat_omega.out"))
@@ -792,7 +779,6 @@ setwd("/home/ubuntu/outlier_analysis/analysis/baypass")
 source("/home/ubuntu/outlier_analysis/programs/BayPass/baypass_utils.R")
 library("ape")
 
-install.packages("corrplot")
 library("corrplot")
 
 pod.xtx <- read.table("G.btapods_summary_pi_xtx.out", header = T)
@@ -937,7 +923,6 @@ baypass_wing <- scan("baypass_wingspan_outlierSNPIDs.txt", what = "", quiet = TR
 
 all_outliers <- list(PCAdapt = pcadapt, VCFtools = vcftools, Bayescan = bayescan, Baypass = baypass, BaypassWing = baypass_wing)
 
-install.packages("UpSetR")
 library(UpSetR)
 
 pdf("All_outliers_upsetplot.pdf")
