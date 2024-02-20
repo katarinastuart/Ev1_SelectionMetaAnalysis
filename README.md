@@ -6,7 +6,8 @@ The project has been funded by <a href="https://ausevo.com/ECR_grants_2022/">the
 
 A version of this workshop that has been adapted to run directly on New Zealand eScience Infrastructure (NeSI) is <a href="https://genomicsaotearoa.github.io/Outlier_Analysis_Workshop/">available here</a>.
 
-<h2>Schedule</h2>
+<details>
+<summary><b>Old schedule (used in previous workshops)</b></summary>
 
 **Day 1**<br>
   9:00am Introduction Slides<br>
@@ -26,6 +27,9 @@ A version of this workshop that has been adapted to run directly on New Zealand 
   1:00pm Baypass<br>
   2:00pm Afternoon tea<br>
   2:15pm Compiling results, group discussiona and metanalysis contribution  
+
+</details>
+
 
 <h2>A brief introduction to Genetic Outlier and Association Analysis</h2>
 
