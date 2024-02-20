@@ -519,9 +519,6 @@ VCF_PARSER_EXC_MISSING_LOCI_QUESTION=false
 # PGD Writer questions
 WRITER_FORMAT=PGD 
 ```
-> **Replace path for VCF_PARSER_POP_FILE_QUESTION** <br>
-> &emsp;
-> Please remember to replace <user> with your user ID in the above or the absolute path to where your _metadata_INDPOP.txt is located!
 
 > :beginner: **Writing out files with nano**
 >
