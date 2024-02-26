@@ -340,7 +340,7 @@ head -n 5 lemon_war.weir.fst
 > starling4       151332  0.0524489<br>
 > starling4       227887  0.0569961<br>
 
-The important column is column 5: the Weighted Fst, from [Weir and Cockerham’s 1984 publication](https://www.jstor.org/stable/2408641). 
+The important column is column 3: WEIR_AND_COCKERHAM_FST, from [Weir and Cockerham’s 1984 publication](https://www.jstor.org/stable/2408641). 
 
 ```
 wc -l lemon_war.weir.fst 
