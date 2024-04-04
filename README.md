@@ -113,6 +113,14 @@ METADATA=$DIR/data/starling_3populations_metadata.txt
 > <br>
 > Alternatively, you can also use your own data for this workshop. If so, it is a good idea to thin your SNP dataset down to roughly 5,000 SNPs to ensure compute times are not too long. If you have more than 50 individuals, you may also want to reduce this. If you would like to do this, place your genetic variant and metadata file in the ``data`` directory and define ``VCF`` and ``METADATA`` based on their names. <br>
 
+<details>
+<summary><b>If you are working on your own data</b></summary>
+You will need to execute this in a screen, or very carefully make sure you run this for about 1-2 hrs without your computer disconnecting from the server.
+```
+instructions on gitcloning and etc.
+```
+</details>
+
 
 Across this workshop, we will need the genetic data to be in several different formats. Let's prepare that now. First we convert the VCF to PLINK, and then to BED.
 
@@ -580,6 +588,14 @@ cp $DIR/workshop_material/Ev1_SelectionMetaAnalysis/workshop_files/backup_files/
 cp $DIR/workshop_material/Ev1_SelectionMetaAnalysis/workshop_files/backup_files/starling_3population_fst.txt .
 cp $DIR/workshop_material/Ev1_SelectionMetaAnalysis/workshop_files/backup_files/starling_3population.sel .
 ```
+
+<details>
+<summary><b>If you are working on your own data</b></summary>
+You will need to execute this in a screen, or very carefully make sure you run this for about 1-2 hrs without your computer disconnecting from the server.
+```
+instructions
+```
+</details>
  
 Identify outliers:
 
