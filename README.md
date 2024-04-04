@@ -115,9 +115,16 @@ METADATA=$DIR/data/starling_3populations_metadata.txt
 
 <details>
 <summary><b>If you are working on your own data</b></summary>
-You will need to execute this in a screen, or very carefully make sure you run this for about 1-2 hrs without your computer disconnecting from the server.
+
+You will need to set you own data files as the ``VCF`` and ``METADATA`` environmental variables. If you sent me your two data files, you can find them at the below address - just make sure to update the name of the files so that it matches the one you sent me ahead of time!
+
 ```
-instructions on gitcloning and etc.
+# Copy your files to the the data folder
+cp $DIR/learner_data/you_filename_prefix* $DIR/data
+
+# Set environment variables
+VCF=$DIR/data/you_filename_prefix.recode.vcf
+METADATA=$DIR/data/you_filename_prefix_metadata.txt
 ```
 </details>
 
@@ -282,7 +289,7 @@ The first thing we will do is create a list of SNPs in VCF, and then assign line
 We create this in the ``analysis`` directory because we will use it for more than just mapping the outlier SNPs for PCAdapt, we will also need it on day 2 for BayeScan and BayPass.
 
 ```
-grep -v "^#" $DIR/data/starling_3populations.recode.vcf | cut -f1-3 | awk '{print $0"\t"NR}' > starling_3populations_SNPs.txt
+grep -v "^#" $VCF | cut -f1-3 | awk '{print $0"\t"NR}' > starling_3populations_SNPs.txt
 ```
 
 Now let us jump back into the  ``pcadapt`` directory to continue working with our outliers. We select column 2 of the outlier file using the ``AWK`` command, which contains the number of outliers.
@@ -469,7 +476,7 @@ Citation: Foll, M., & Gaggiotti, O. (2008). A genome-scan method to identify sel
 
 BayeScan identifies outlier SNPs based on allele frequencies.
 
-Prepare your terminal session:Since you are likely using a new terminal session today, you will need to set the environment variables again to use them. Copy and paste the following command into your terminal to ensure you reference the correct variables.
+Prepare your terminal session:Since you are likely using a new terminal session today, you will need to set the environment variables again to use them. Copy and paste the following command into your terminal to ensure you reference the correct variables. Remember, if you are using your own data these commands will be a bit different, as they will point to a different data and metadata file.
 
 ```
 DIR=/home/ubuntu/outlier_analysis
@@ -591,10 +598,28 @@ cp $DIR/workshop_material/Ev1_SelectionMetaAnalysis/workshop_files/backup_files/
 
 <details>
 <summary><b>If you are working on your own data</b></summary>
-You will need to execute this in a screen, or very carefully make sure you run this for about 1-2 hrs without your computer disconnecting from the server.
+
+You will need to execute this in a [screen](https://linuxize.com/post/how-to-use-linux-screen/), use the below instructions to help you create your screen for running this Bayescan analysis.
+
 ```
-instructions
+#create screen 
+screen -S bayescan
+
+#exit screen without deleting it
+Ctrl+a d
+
+#list all the screens available in your environment
+screen -ls
+
+#reconnect to the screen you just created
+screen -r bayescan
+
+#now let's navigate to your directory and run the Bayescan command
+cd /home/ubuntu/outlier_analysis/analysis/bayescan
+module load quay.io/biocontainers/bayescan/2.0.1--h9f5acd7_4
+bayescan2 ./starling_3populations.bs -od ./ -threads 2 -n 5000 -thin 10 -nbp 20 -pilot 5000 -burn 50000 -pr_odds 10
 ```
+
 </details>
  
 Identify outliers:
