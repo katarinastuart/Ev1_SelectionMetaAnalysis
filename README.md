@@ -109,6 +109,10 @@ cp $DIR/workshop_material/Ev1_SelectionMetaAnalysis/workshop_files/* $DIR/data
 # Set environment variables
 VCF=$DIR/data/starling_3populations.recode.vcf
 METADATA=$DIR/data/starling_3populations_metadata.txt
+
+# Check that this has worked
+head $VCF
+head $METADATA
 ```
 
 > :heavy_exclamation_mark: **Working with your own data** <br> 
@@ -127,6 +131,10 @@ cp $DIR/workshop_material/Ev1_SelectionMetaAnalysis/learner_data/your_filename_p
 # Set environment variables
 VCF=$DIR/data/your_filename_prefix.recode.vcf
 METADATA=$DIR/data/your_filename_prefix_metadata.txt
+
+# Check that this has worked
+head $VCF
+head $METADATA
 ```
 </details>
 
@@ -914,7 +922,6 @@ Finally, let's generate the list of phenotype-associated SNP IDs.
 
 ```
 cat starling_3populations_baypass_wing_summary_betai.out | awk '$6>20' > starling_3populations_baypass_wing_BF20.txt
-starling_3populations_baypass_wing_BF20.txt
 
 wc -l starling_3populations_baypass_wing_BF20.txt
 ```
