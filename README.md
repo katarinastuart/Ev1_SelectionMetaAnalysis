@@ -102,6 +102,8 @@ cd $DIR/workshop_material
 
 # Download required files to data directory
 git clone https://github.com/katarinastuart/Ev1_SelectionMetaAnalysis.git
+
+#place the VCF and METADATA files into our data folder
 cp $DIR/workshop_material/Ev1_SelectionMetaAnalysis/workshop_files/* $DIR/data
 
 # Set environment variables
@@ -120,11 +122,11 @@ You will need to set you own data files as the ``VCF`` and ``METADATA`` environm
 
 ```
 # Copy your files to the the data folder
-cp $DIR/learner_data/you_filename_prefix* $DIR/data
+cp $DIR/workshop_material/Ev1_SelectionMetaAnalysis/learner_data/your_filename_prefix* $DIR/data
 
 # Set environment variables
-VCF=$DIR/data/you_filename_prefix.recode.vcf
-METADATA=$DIR/data/you_filename_prefix_metadata.txt
+VCF=$DIR/data/your_filename_prefix.recode.vcf
+METADATA=$DIR/data/your_filename_prefix_metadata.txt
 ```
 </details>
 
@@ -207,7 +209,7 @@ summary(starlings_pcadapt_pca)
 Investigate axis projections.
 
 ```
-poplist.names <- c(rep("Lemon", 13),rep("Warrnambool", 13),rep("Nowra", 13))
+poplist.names <- read.delim("/home/ubuntu/outlier_analysis/data/KSTUART_metadata.txt", header=FALSE)[,2]
 print(poplist.names)
 
 pdf("pcadapt_starlings_projection1v2.pdf")
