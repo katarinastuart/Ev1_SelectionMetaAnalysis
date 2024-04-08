@@ -1,3 +1,5 @@
-List of learner data:
+Things for Kat to double check in leaner data:
 
-none yet!
+.VCF and .TXT file types
+check order of samples in metadata
+remove metadata headers
