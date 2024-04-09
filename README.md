@@ -120,7 +120,7 @@ head $METADATA
 > Alternatively, you can also use your own data for this workshop. If so, it is a good idea to thin your SNP dataset down to roughly 5,000 SNPs to ensure compute times are not too long. If you have more than 50 individuals, you may also want to reduce this. If you would like to do this, place your genetic variant and metadata file in the ``data`` directory and define ``VCF`` and ``METADATA`` based on their names. <br>
 
 <details>
-<summary><b>If you are working on your own data</b></summary>
+<summary><b>If you are working on your own data:</b> setting environmental variables</summary>
 
 You will need to set you own data files as the ``VCF`` and ``METADATA`` environmental variables. If you sent me your two data files, you can find them at the below address - just make sure to update the name of the files so that it matches the one you sent me ahead of time!
 
@@ -137,6 +137,34 @@ head $VCF
 head $METADATA
 ```
 </details>
+
+<details>
+<summary><b>If you are working on your own data:</b> checking metadata file order</summary>
+
+Check that your VCF file and metadata file have individuals in the same order - it will make your future work a lot easier.
+
+```
+module load quay.io/biocontainers/bcftools/1.17--h3cc50cf_1/module
+
+bcftools query -l $VCF > sample_ordering.txt
+
+R
+
+setwd("/home/ubuntu/outlier_analysis/data")
+
+sample_ordering <- read.table("sample_ordering.txt", sep="\t", header=FALSE)
+colnames(sample_ordering) <- c("sampleID")
+
+metadata <- read.table("your_filename_prefix_metadata.txt", sep="\t", header=TRUE)
+
+#find the columns with the individual IDs in them, and merge 
+reordered <- merge(sample_ordering, metadata, by.x = "sampleID", by.y = "column1", sort=FALSE) 
+
+write.table(reordered, file = "your_filename_prefix_metadata_reordered.txt", sep="\t", quote = FALSE)
+
+```
+</details>
+
 
 
 Across this workshop, we will need the genetic data to be in several different formats. Let's prepare that now. First we convert the VCF to PLINK, and then to BED.
