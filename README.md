@@ -148,6 +148,9 @@ module load quay.io/biocontainers/bcftools/1.17--h3cc50cf_1/module
 
 bcftools query -l $VCF > sample_ordering.txt
 
+#also check that you have SNP IDs. If not, we can add them
+bcftools annotate --set-id +'%CHROM\_%POS' your_filename_prefix.recode.vcf -o your_filename_prefix_ID.recode.vcf
+
 R
 
 setwd("/home/ubuntu/outlier_analysis/data")
