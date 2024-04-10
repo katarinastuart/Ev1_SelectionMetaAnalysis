@@ -163,7 +163,7 @@ metadata <- read.table("your_filename_prefix_metadata.txt", sep="\t", header=TRU
 #find the columns with the individual IDs in them, and merge 
 reordered <- merge(sample_ordering, metadata, by.x = "sampleID", by.y = "column1", sort=FALSE) 
 
-write.table(reordered, file = "your_filename_prefix_metadata_reordered.txt", sep="\t", quote = FALSE)
+write.table(reordered, file = "your_filename_prefix_metadata_reordered.txt", sep="\t", quote = FALSE, row.names=FALSE, col.names=FALSE)
 
 ```
 </details>
@@ -248,7 +248,7 @@ summary(starlings_pcadapt_pca)
 Investigate axis projections.
 
 ```
-poplist.names <- read.delim("/home/ubuntu/outlier_analysis/data/KSTUART_metadata.txt", header=FALSE)[,2]
+poplist.names <- read.delim("/home/ubuntu/outlier_analysis/data/starling_3populations_metadata.txt", header=FALSE)[,2]
 print(poplist.names)
 
 pdf("pcadapt_starlings_projection1v2.pdf")
