@@ -757,7 +757,7 @@ q()
 
 ## BayPass
 
-The BayPass manual can be found [here](http://www1.montpellier.inra.fr/CBGP/software/baypass/files/BayPass_manual_2.31.pdf).
+The BayPass manual can be found [here](https://forgemia.inra.fr/mathieu.gautier/baypass_public/-/blob/master/manual/BayPass_manual.pdf?ref_type=heads).
 
 Citation: Gautier, M. (2015). Genome-wide scan for adaptive divergence and association with population-specific covariates. Genetics, 201(4), 1555-1579. https://doi.org/10.1534/genetics.115.181453
 
@@ -907,7 +907,7 @@ pop_metadata <- aggregate(V3 ~ V2, data = metadata, mean)
 
 # Check mean wingspan
 pop_metadata[, 2]
-write(pop_metadata[,2], "pop_mean_wingspan.txt")
+write(pop_metadata[,2], "pop_mean_wingspan.txt", ncolumns = length(pop_metadata[,2]))
 
 q()
 ```
