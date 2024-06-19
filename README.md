@@ -120,25 +120,6 @@ head $METADATA
 > Alternatively, you can also use your own data for this workshop. If so, it is a good idea to thin your SNP dataset down to roughly 5,000 SNPs to ensure compute times are not too long. If you have more than 50 individuals, you may also want to reduce this. If you would like to do this, place your genetic variant and metadata file in the ``data`` directory and define ``VCF`` and ``METADATA`` based on their names. <br>
 
 <details>
-<summary><b>If you are working on your own data:</b> setting environmental variables</summary>
-
-You will need to set you own data files as the ``VCF`` and ``METADATA`` environmental variables. If you sent me your two data files, you can find them at the below address - just make sure to update the name of the files so that it matches the one you sent me ahead of time!
-
-```
-# Copy your files to the the data folder
-cp $DIR/workshop_material/Ev1_SelectionMetaAnalysis/learner_data/your_filename_prefix* $DIR/data
-
-# Set environment variables
-VCF=$DIR/data/your_filename_prefix.recode.vcf
-METADATA=$DIR/data/your_filename_prefix_metadata.txt
-
-# Check that this has worked
-head $VCF
-head $METADATA
-```
-</details>
-
-<details>
 <summary><b>If you are working on your own data:</b> checking metadata file order</summary>
 
 Check that your VCF file and metadata file have individuals in the same order - it will make your future work a lot easier.
@@ -167,6 +148,28 @@ write.table(reordered, file = "your_filename_prefix_metadata_reordered.txt", sep
 
 ```
 </details>
+
+
+
+<details>
+<summary><b>If you are working on your own data:</b> setting environmental variables</summary>
+
+You will need to set you own data files as the ``VCF`` and ``METADATA`` environmental variables. If you sent me your two data files, you can find them at the below address - just make sure to update the name of the files so that it matches the one you sent me ahead of time!
+
+```
+# Copy your files to the the data folder
+cp $DIR/workshop_material/Ev1_SelectionMetaAnalysis/learner_data/your_filename_prefix* $DIR/data
+
+# Set environment variables
+VCF=$DIR/data/your_filename_prefix.recode.vcf
+METADATA=$DIR/data/your_filename_prefix_metadata.txt
+
+# Check that this has worked
+head $VCF
+head $METADATA
+```
+</details>
+
 
 
 
