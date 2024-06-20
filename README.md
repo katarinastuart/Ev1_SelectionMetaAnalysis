@@ -684,6 +684,18 @@ write.table(outliers.bayescan, file = "bayescan_outliers.txt")
 > $nb_outliers <br>
 > [1] 5
 
+<details>
+<summary><b>If you are working on your own data</b></summary>
+
+You will need to source a different plot_R code, which matches the version of Bayescan that is on Pawsey. The dummy data files were generated on version 2.1, and the version on Pawsey is 2.0.1.
+
+```
+source("/home/ubuntu/outlier_analysis/workshop_material/Ev1_SelectionMetaAnalysis/workshop_files/backup_files/plot_R_v2.0.1.r")
+```
+
+</details>
+
+
 And finally, let's do a quick check of convergence. For more information please refer to [this documentation](https://evomics.org/wp-content/uploads/2016/01/BayeScan_BayeScEnv_exercises.pdf).
 
 ```
