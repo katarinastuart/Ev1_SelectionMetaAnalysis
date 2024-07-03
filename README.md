@@ -40,13 +40,13 @@ Throughout this vignette, I will collectively refer to outlier and association a
 This vignette will start by covering some very simple outlier analyses:
 <ul>
 <li><a href="https://bcm-uga.github.io/pcadapt/articles/pcadapt.html"><b>PCAdapt</b></a> can detect genetic marker outliers without having population<sup>B</sup> designations using a Principle Component Analysis (PCA) approach.</li>
-<li><a href="GBIF"><b>F<sub>ST</sub></b></a> outlier analysis is an approach that uses pairwise comparisons between two populations and the fixation index metric to assess each genetic marker.</li>
+<li><a href="https://en.wikipedia.org/wiki/Fixation_index"><b>F<sub>ST</sub></b></a> outlier analysis is an approach that uses pairwise comparisons between two populations and the fixation index metric to assess each genetic marker.</li>
 </ul>
 
 Next, we will conduct some more advanced outlier analyses:
 <ul>
-<li><a href="https://bcm-uga.github.io/pcadapt/articles/pcadapt.html"><b>Bayescan</b></a>looks for differences in allele frequencies between populations to search for outliers.</li>
-<li><a href="GBIF"><b>Baypass</b></a> elaborates on the bayenv model (another popular association analysis program) and allows you to conduct many different types of genetic outlier and genetic association tests.</li>
+<li><a href="https://github.com/mfoll/BayeScan"><b>Bayescan</b></a> looks for differences in allele frequencies between populations to search for outliers.</li>
+<li><a href="https://forgemia.inra.fr/mathieu.gautier/baypass_public"><b>Baypass</b></a> elaborates on the bayenv model (another popular association analysis program) and allows you to conduct many different types of genetic outlier and genetic association tests.</li>
 </ul>
 
 We will cover the pre-processing of program-specific input files, how to run the programs, how to visualise the output, and in some cases we'll need to take extra steps to map the genetic markers of interest back to the SNP data.  
