@@ -30,30 +30,51 @@ A version of this workshop that has been adapted to run directly on New Zealand 
 
 </details>
 
+<details>
+<summary><b>List of bash commands used in this workshop</b></summary>
+  
+**mkdir** — Create a directory<br>
+**cd** — Change directory<br>
+**cp** — copy files and directories<br>
+**ls** — List directory contents<br>
+**head** — Read the start of a file<br>
+**less** — view the contents of a text file<br>
+**grep** — search<br>
+**|** — Pipe<br>
+**cut** — cut line parts from specified files<br>
+**awk** — pattern scanning and processing<br>
+**wc** — word count<br>
+**tr** — deletes or substitutes characters<br>
+**sed** — modifies lines<br>
+**echo**  — Prints text to the terminal window<br>
+**cat** — Read a file, create a file, and concatenate files<br>
+**comm** — returns three columns depending on the uniqueness of the data<br>
+
+</details>
 
 <h2>A brief introduction to Genetic Outlier and Association Analysis</h2>
 
-When we look through a genome to try to find loci that are under divergent selection, two common apporaches are outlier analysis and association analyses. **Outlier analysis** requires just knowledge of the genetics of your samples (plus sample metadata, for example, population groupings) and tries to find loci that behave very differently from the underlying patterns across the genome (with the assumption being that the rest of the genome represents patterns of neutral genetic diveristy)<sup>A</sup>. Meanwhile **association analysis** requires some sort of covariate data, and tests whether there are any genetic variants statistically associated with this new data (you may have heard the term [GWAS](https://www.genome.gov/genetics-glossary/Genome-Wide-Association-Studies)). This covariate data can come in the form of phenotype data (e.g., morphology, disease status, physiology measures) or could be spatial (e.g., environmental, climate). Association tests look for sites in the genome where the presence or absence of a variant is highly correlated with the values in the co-variate data, usually through some regression-type analysis.
+When we look through a genome to try to find loci that are under selection, common apporaches are outlier analysis and association analyses. For **outlier analysis** we are looking for sites in the genome that demonstrate significantly higher or lower within- or among-population genetic differentiation than expected under neutrality. **Outlier analysis** requires just knowledge of the genetics of your samples (plus occasionally sample metadata, for example, population groupings) and tries to find loci that behave very differently from the underlying patterns across the genome (with the assumption being that the rest of the genome represents patterns of neutral genetic diveristy)<sup>A</sup>. Meanwhile **association analysis** requires some sort of covariate data, and tests whether there are any genetic variants statistically associated with this extra data (you may have heard the term [GWAS](https://www.genome.gov/genetics-glossary/Genome-Wide-Association-Studies)). This covariate data can come in the form of phenotype data (e.g., morphology, disease status, physiology measures) or could be spatial (e.g., environmental, climate). Association tests look for sites in the genome where the presence or absence of a variant is highly correlated with the values in the co-variate data, usually through some regression-type analysis.
 
 Throughout this vignette, I will collectively refer to outlier and association analysis as selection analysis. There are a lot of programs that exist currently. You can find a very long (though not exhaustive) list [here](https://bioinformaticshome.com/tools/gwas/gwas.html). 
 
 This vignette will start by covering some very simple outlier analyses:
 <ul>
-<li><a href="https://bcm-uga.github.io/pcadapt/articles/pcadapt.html"><b>PCAdapt</b></a> can detect genetic marker outliers without having population<sup>B</sup> designations using a Principle Component Analysis (PCA) approach.</li>
-<li><a href="https://en.wikipedia.org/wiki/Fixation_index"><b>F<sub>ST</sub></b></a> outlier analysis is an approach that uses pairwise comparisons between two populations and the fixation index metric to assess each genetic marker.</li>
+<li> <b>Within group outliers:</b> <a href="https://bcm-uga.github.io/pcadapt/articles/pcadapt.html"><b>PCAdapt</b></a> can detect genetic marker outliers without having population<sup>B</sup> designations using a Principle Component Analysis (PCA) approach.</li>
+<li> <b>Between group outliers (pairwise):</b> <a href="https://en.wikipedia.org/wiki/Fixation_index"><b>F<sub>ST</sub></b></a> outlier analysis is an approach that uses pairwise comparisons between two populations and the fixation index metric to assess each genetic marker. This approach does not provide any correction for population strucutre.</li>
 </ul>
 
 Next, we will conduct some more advanced outlier analyses:
 <ul>
-<li><a href="https://github.com/mfoll/BayeScan"><b>Bayescan</b></a> looks for differences in allele frequencies between populations to search for outliers.</li>
-<li><a href="https://forgemia.inra.fr/mathieu.gautier/baypass_public"><b>Baypass</b></a> elaborates on the bayenv model (another popular association analysis program) and allows you to conduct many different types of genetic outlier and genetic association tests.</li>
+<li> <b>Between group outliers (3+ groups):</b> <a href="https://github.com/mfoll/BayeScan"><b>Bayescan</b></a> looks for differences in allele frequencies between populations to search for outliers using bayesian statistics. This approach does not provide any correction for population strucutre.</li>
+<li> <b>Between group outliers (3+ groups) and association analysis:</b> <a href="https://forgemia.inra.fr/mathieu.gautier/baypass_public"><b>Baypass</b></a> elaborates on the bayenv model (another popular association analysis program) and allows you to conduct many different types of genetic outlier and genetic association tests, while attempting to account for population strucutre.</li>
 </ul>
 
 We will cover the pre-processing of program-specific input files, how to run the programs, how to visualise the output, and in some cases we'll need to take extra steps to map the genetic markers of interest back to the SNP data.  
 
 > :beginner: **Reduced representation versus whole genome sequencing (WGS)**
 >
-> Outlier analysis is often done on reduced representation data. It is important to remember how your genome coverage (the number of genome variant sites / the genome length <sup>C</sup>) will affect your results and interpretation. Often with WGS data, you will see well -resolved 'peaks' with a fairly smooth curve of points leading up to it on either side. From this, we often infer that the highest point is the genetic variant of interest and the sites on either side of the peak exhibit signals of selection because they reside close to, and thus are linked to, the true variant of interest. However, consider that even in WGS data, unless we have every single genetic variant represented (which may not be the case, depending on our variant calling and filtering parameters), it is possible that the genetic variant of interest that we have identified is not the main one, but is simply another neighboring linked SNP to one that is not represented in the data. This problem becomes even more relevant with reduced representation sequencing (RRS), for which the genome coverage may be extremely patchy <sup>C</sup>. Thus with all outlier analysis, but especially so for those using RRS data, remember that your flagged outliers are not exhaustive and may themselves only be liked to the variant that is truly under selection.
+> Outlier analysis is often done on reduced representation data. It is important to remember how your genome coverage (the number of genome variant sites / the genome length <sup>C</sup>) will affect your results and interpretation. Often with WGS data, you will see well -resolved 'peaks' with a fairly smooth curve of points leading up to it on either side. From this, we often infer that the highest point is the genetic variant of interest and the sites on either side of the peak exhibit signals of selection because they reside close to, and thus are linked to, the true variant of interest. However, consider that even in WGS data, unless we have every single genetic variant represented (which may not be the case, depending on our variant calling and filtering parameters), it is possible that the genetic variant of interest that we have identified is not the main one, but is simply a neighboring SNP close to one that is not represented in the data. This problem becomes even more relevant with reduced representation sequencing (RRS), for which the genome coverage may be extremely patchy <sup>C</sup>. Thus with all outlier analysis, but especially so for those using RRS data, remember that your flagged outliers are not exhaustive and may themselves only be liked to the variant that is truly under selection.
 
  
 <img src="/images/Manhattan_Hofmesiter_example.PNG" alt="Manhattan plot of the association between Fst and loci along a genome. Manhattan plot example from https://doi.org/10.1111/mec.17195" width="700"/>
@@ -119,6 +140,10 @@ head $METADATA
 > <br>
 > Alternatively, you can also use your own data for this workshop. If so, it is a good idea to thin your SNP dataset down to roughly 5,000 SNPs to ensure compute times are not too long. If you have more than 50 individuals, you may also want to reduce this. If you would like to do this, place your genetic variant and metadata file in the ``data`` directory and define ``VCF`` and ``METADATA`` based on their names. <br>
 
+> :beginner: **Filtering your own data**
+>
+> Remember to apply the usual population genomic filters to your data before you proceed with the data thinning/subsetting. Exactly what type of data filtering is needed will depend on your data, however some standard filtering steps are to **1)** filter out genotype calls based on minimum quality, and a minimum and maximum depth, **2)** filter out individuals (columns) and SNPs (rows) that have high (50% or more) missingness, **3)** minor allele frequency or minor allele count. For many of these types of analysis, I would not thin the SNP data for linkage disequilibrium (LD) or physical distance, as clusters of linked SNPs are useful and will help you spot interesting outlier regions in the genome. One exception to this though is PCAdapt, for which you may want to consider thinning based on LD.
+
 <details>
 <summary><b>If you are working on your own data:</b> checking metadata file order</summary>
 
@@ -173,6 +198,7 @@ head $METADATA
 
 
 
+
 Across this workshop, we will need the genetic data to be in several different formats. Let's prepare that now. First we convert the VCF to PLINK, and then to BED.
 
 ```
@@ -194,7 +220,7 @@ plink --file starling_3populations.plink --make-bed --noweb --out starling_3popu
 
 ## PCAdapt
 
-PCAdapt uses an ordination approach to find sites in a data set that are outliers with respect to background population structure. The PCAdapt manual is available [here](https://bcm-uga.github.io/pcadapt/articles/pcadapt.html). 
+PCAdapt uses an ordination approach to find sites in a data set that are outliers with respect to background population structure. The PCAdapt manual is available [here](https://bcm-uga.github.io/pcadapt/articles/pcadapt.html), and a lot of the code below has been taken from this manual. If you want to explore this program more I highly recommend going through the full tutorial. 
 
 Citation: Privé, F., Luu, K., Vilhjálmsson, B. J., & Blum, M. G. B. (2020). Performing Highly Efficient Genome Scans for Local Adaptation with R Package pcadapt Version 4. Mol Biol Evol, 37(7), 2153-2154. https://doi.org/10.1093/molbev/msaa053
 
@@ -227,7 +253,7 @@ dev.off()
 
 <img src="/images/pcadapt_kplot.PNG" alt="k plot" width="400"/>
 
-A K value of 3 is most appropriate, as this is the value of K after which the curve starts to flatten out more.
+A K value of 3 is most appropriate, as this is the value of K after which the curve starts to flatten out more. This means we have identified the PC's that capture population structure.
 
 ```
 starlings_pcadapt_pca <- pcadapt(starlings_pcadapt, K = 3)
@@ -411,7 +437,7 @@ wc -l lemon_war.weir.fst
 
 Notice how there are as many lines as there are SNPs in the data set, plus one for a header. It is always a good idea to check your output to ensure everything looks as expected!
 
-Next, instead of calculating pairwise population differentiation on an SNP-by-SNP basis, we will use a sliding window approach. The ``--fst-window-size 50000`` refers to the window size of the genome (in base pairs) in which we are calculating one value: all SNPs within this window are used to calculate Fst. The ``--fst-window-step`` option indicates how many base pairs the window is moving down the genome before calculating Fst for the second window, then the third, and so on. 
+Next, instead of calculating pairwise population differentiation on an SNP-by-SNP basis, we will use a sliding window approach. The ``--fst-window-size 50000`` refers to the window size of the genome (in base pairs) in which we are calculating one value: all SNPs within this window are used to calculate Fst. The ``--fst-window-step`` option indicates how many base pairs the window is moving down the genome before calculating Fst for the second window, then the third, and so on. In genetal 50000 bp is a good size of sliding window, and the absolutely maximum size of sliding windows in my option should be 1 Mb, but even this window size is very big.
 
 > **Warning about sliding windows** <br>
 > &emsp;
@@ -441,7 +467,7 @@ wc -l lemon_war.windowed.weir.fst
 > &emsp;
 > 10838
 
-Notice the line count is different from the SNP-based Fst comparison; there are more lines in the sliding window-based Fst comparison. This is because there are more sliding windows across the chromosome in this data set than there are SNPs. Consider which of these steps is better for your data: the sliding window approach might not be the best in low-density SNP datasets.
+Notice the line count is different from the SNP-based Fst comparison; there are more lines in the sliding window-based Fst comparison. This is because there are more sliding windows across the chromosome in this data set than there are SNPs. Consider which of these steps is better for your data: the sliding window approach might not be the best in low-density SNP datasets like this one. But we will proceed with the sliding window analysis so that we can demonstrate the code needed to identify the SNPs within outlier windows. 
 
 Now let us plot the Fst across the chromosome. To do this, we will add line numbers on our Fst file that will be used to order the Fst measurements across the x-axis of our Manhattan plot.
 
@@ -550,7 +576,7 @@ nano VCF_PGD.spid
 
 Into the VCG_PGD.spid file, copy and paste the code below. On the line that starts with VCF_PARSER_POP_FILE_QUESTION, replace the example location with the location of your metadata file.
 
-Write the following into VCF_PGD.spid
+Write the following into VCF_PGD.spid, making sure to not create any accidental white spaces in our file.
 
 
 ```
@@ -580,7 +606,7 @@ VCF_PARSER_PL_QUESTION=false
 VCF_PARSER_EXC_MISSING_LOCI_QUESTION=false
 
 # PGD Writer questions
-WRITER_FORMAT=PGD 
+WRITER_FORMAT=PGD
 ```
 
 > :beginner: **Writing out files with nano**
@@ -802,6 +828,16 @@ cp $DIR/data/starling_3populations.plink.map .
 cp $DIR/data/starling_3populations.plink.log .
 ```
 
+Let's take a quick look at both the original PLINK ped file, and the new one. Do you notice anything worrying? We have manually manipulated our file, and by not checking that the ordering of individuals in our xxx metadata file is in the same 
+
+```
+#original
+less $PLINK
+
+#new
+less starling_3populations.plink.ped
+```
+
 Run the population-based allele frequency calculations.
 
 ```
@@ -817,6 +853,23 @@ Manipulate file so it has BayPass format, numbers set for PLINK output file, and
 ```
 tail -n +2 starling_3populations.frq.strat | awk '{ $9 = $8 - $7 } 1' | awk '{print $7,$9}' | tr "\n" " " | sed 's/ /\n/6; P; D' > starling_3populations_baypass.txt
 ```
+
+
+
+
+<details>
+<summary><b>If you are working on WGS data this might run slowly</b></summary>
+
+Try this alternate code that was made by [Kamolphat Atsawawaranunt](https://scholar.google.co.uk/citations?hl=en&user=v-yycHkAAAAJ&view_op=list_works&sortby=pubdate).
+
+
+```
+npop2=22 # number of pop times 2
+tail -n +2 myna.plink.frq.strat.reordered | awk '{ $9 = $8 - $7 } 1' | awk '{print $7,$9}' | tr " " "\n" | awk -v pp=${npop2} '{if (NR % pp == 0){a=a $0"";print a; a=""} else a=a $0" "}' > ${bayp}
+${bayp} is the path to the output BayPass file.
+```
+
+</details>
 
 Now we can run Baypass. It should run for about 5 minutes.
 
