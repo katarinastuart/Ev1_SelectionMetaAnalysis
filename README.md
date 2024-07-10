@@ -886,13 +886,19 @@ cd $DIR/analysis/baypass
 g_baypass -npop 3 -gfile ./starling_3populations_baypass.txt -outprefix starling_3populations_baypass -nthreads 4
 ```
 
-Run in R to make the anapod data. First, let us quickly download the utilities we need.
+> :beginner: **Trying to run Bayescan and Baypass on WGS data?**
+>
+> These programs take a while to run, and in order to do analysis on millions of SNPs the best approach is to break your dataset down into many smaller ones, then combine the results. The authors of Baypass demonstrate such an approach in their paper on [The Genomic Basis of Color Pattern Polymorphism in the Harlequin Ladybird](https://www.sciencedirect.com/science/article/pii/S0960982218310686).
+
+The posterior mean XtX statistic column (M_XtX) in the 'pi_xtx.out' file contains a metric that captures the level of genetic differentiation for each loci. Newer versions of Baypass (v2.41 onwards) also output p-values that can be used as a way of determining XtX outliers (and can be multiple test corrected like what we did for PCAdapt). However, another way of personalising your threshold above which you will consider SNPs an outlier is to find a threshold based on neutral genetic patterns specific to your data set. For this we use the population structure covariance matrix (omega) produced by the first Baypass run, and we simulate a neutral SNP dataset for your population's set of parameters. We then calculate a percentile threshold based on this neutral data, and apply it back to our real data.
+
+For this, we move to R to make the simulated data using some of the Baypass utilities. First, let us quickly download the utilities we need.
 
 ```
 cd $DIR/programs
 git clone https://github.com/andbeck/BayPass.git
 ```
-Now let us generate some simulated data based on the parameters calculated from our genetic data.
+Now let us generate some simulated data based on the population structure covariance matrix (omega) parameters calculated from our genetic data.
 
 ```
 R
@@ -914,7 +920,7 @@ simu.bta <- simulate.baypass(omega.mat = omega, nsnp = 5000, sample.size = bta14
 q()
 ```
 
-We now have the simulated genetic data. We can find the XtX statistic threshold above which we will consider genetic sites an outlier.
+We now have the simulated genetic data. We can find the XtX statistic threshold above which we will consider genetic sites an outlier as based on neutral patterns of genetic differentiation in our data. For this we rerun Baypass on our similated data.
 
 ```
 cd $DIR/analysis/baypass
@@ -922,7 +928,7 @@ cd $DIR/analysis/baypass
 g_baypass -npop 3 -gfile G.btapods -outprefix G.btapods -nthreads 2
 ```
 
-XtX calibration; get the pod XtX theshold
+Now we obtain a M_XtX threshold that is based of neutral SNPs.
 
 ```
 R
@@ -950,7 +956,7 @@ q()
 
 Your values may be slightly different as the simulated data will not be identical.
 
-Next, we filter the data for the outlier SNPs by identifying those above the threshold.
+Next, we filter the output of the original Baypass run for outlier SNPs, by finding those that are above this threshold.
 
 ```
 cat starling_3populations_baypass_summary_pi_xtx.out | awk '$4>6.258372 ' > baypass_outliers.txt
@@ -1100,22 +1106,18 @@ Let's have a discussion about the overlap between these five outlier groups. Man
 If you want to get really fancy, you may even want to plot your variants at their location around your genome in a <a href="https://github.com/katarinastuart/Sv3_StarlingGenome">circle plot</a>!
 
 
-## Workshop End discussion
+## Workshop End discussion and Q&A
   
 A brief period of group discussion on one of the days about research question framing and grant integration - refer to the slides if you need some ideas. Below I will curate a list of useful papers that demonstrate some cool things you can do with your outier loci.
 
-Strong population structure getting in the way of performing environmental associations with your genetic data (GEA)? Read some methods [here](https://besjournals.onlinelibrary.wiley.com/doi/full/10.1111/1365-2656.13692).
-  
-## Outlier Analysis Meta-analysis
+Trying to account for strong population structure while performing environmental associations with your genetic data (GEA)? <br>
+[Try using dummy variables to identify false positives](https://besjournals.onlinelibrary.wiley.com/doi/full/10.1111/1365-2656.13692).
 
-This workshop was conceived as part of a larger project. The goal is to compile as many genomics data sets with identified outliers as possible. While identifying outliers is an interesting and often necessary component of singular genomics projects, there is also a lot to be gained from looking at patterns across neutral versus outlier genetic variants across many different projects and taxa.<p>
+Trying to run lots of SNPs and it is taking too long?<br>
+[Try splitting your data into many small subsets](https://www.sciencedirect.com/science/article/pii/S0960982218310686).  
 
-One of the goals of this project is to compile a collection of genetic data sets information. Most of these will come from pre-published work, but attendees of this workshop may opt in their data sets should they want to have their data involved in this project.
-
-**Ideally for the metanalysis we need:**<br>
-VCF file with all genetic variants (SNPS) <br>
-List of which variants are outliers, and what type of outliers these are <br>
-OPTIONAL but PREFERRED: Reference genome that has been annotated and well scaffolded <br>
+Trying to combine lists of ourliers obtained from different approaches in a statistical way?<br>
+Try p-value geometric mean calculations.
 
 
 ## Funding 
