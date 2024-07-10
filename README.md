@@ -274,7 +274,7 @@ summary(starlings_pcadapt_pca)
 > pvalues &nbsp;          5007  -none- numeric <br>
 > pass &nbsp;             4610  -none- numeric 
 
-Investigate axis projections.
+Investigate axis projections, to check that below the elbow or bend in the K plot we have no more population structure.
 
 ```
 poplist.names <- read.delim("/home/ubuntu/outlier_analysis/data/starling_3populations_metadata.txt", header=FALSE)[,2]
@@ -294,6 +294,8 @@ Ignore the warning:
 > :heavy_exclamation_mark: Use of `df$Pop` is discouraged. Use `Pop` instead.
 
 <img src="/images/pcadapt_proj1.PNG" alt="projection axis1 axis2" width="300"/> <img src="/images/pcadapt_proj2.PNG" alt="projection axis6 axis7" width="300"/>
+
+> :beginner: **No population groupings?** No problem! Colouring them by latitude or longitude may also help check that you have captured the population structure.
 
 Investigate Manhattan and Q-Qplot.
 
@@ -1119,7 +1121,7 @@ Trying to run lots of SNPs and it is taking too long?<br>
 Trying to combine lists of ourliers obtained from different approaches in a statistical way?<br>
 Try p-value geometric mean calculations.
 
-Trying to see if anyone with a dataset like yours has run a specific program?
+Trying to see if anyone with a dataset like yours has run a specific program?<br>
 Search for the paper title of your prefered program in [google scholar](https://scholar.google.com/), and click the 'Cited by XXX'. Then, click the box 'Search within citing articles' and look up your study keywords in the literature that has cited that program, and you may find some relevant ones. Even better, if it is a recent paper in a journal that promotes open science (e.g., Molecular Ecology) the authors may have made their code publically available.
 
 ## Funding 
