@@ -4,7 +4,7 @@ There are lots of interesting patterns that you can extract from genetic variant
 
 The project has been funded by <a href="https://ausevo.com/ECR_grants_2022/">the AES ERC Networking Grant Scheme</a> and <a href="https://genetics.org.au/">GSA</a>.
 
-A version of this workshop that has been adapted to run directly on New Zealand eScience Infrastructure (NeSI) is <a href="https://genomicsaotearoa.github.io/Outlier_Analysis_Workshop/">available here</a>.
+This workshop is a mixture of Bash and R. A version of this workshop that has been adapted to run directly on New Zealand eScience Infrastructure (NeSI) is <a href="https://genomicsaotearoa.github.io/Outlier_Analysis_Workshop/">available here</a>. The code is currently set up for running on [Pawsey](https://pawsey.org.au/), and where the code indicates ``R`` please run the lines in R , while ``q()`` indicates that you should leave the R environment.
 
 <details>
 <summary><b>Old schedule (used in previous workshops)</b></summary>
@@ -1119,6 +1119,8 @@ Trying to run lots of SNPs and it is taking too long?<br>
 Trying to combine lists of ourliers obtained from different approaches in a statistical way?<br>
 Try p-value geometric mean calculations.
 
+Trying to see if anyone with a dataset like yours has run a specific program?
+Search for the paper title of your prefered program in [google scholar](https://scholar.google.com/), and click the 'Cited by XXX'. Then, click the box 'Search within citing articles' and look up your study keywords in the literature that has cited that program, and you may find some relevant ones. Even better, if it is a recent paper in a journal that promotes open science (e.g., Molecular Ecology) the authors may have made their code publically available.
 
 ## Funding 
 <p align="center">
