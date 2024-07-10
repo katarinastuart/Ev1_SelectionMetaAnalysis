@@ -299,7 +299,7 @@ Investigate Manhattan and Q-Qplot.
 
 > :beginner: **Manhattan plots** are a way to visualize the GWAS (genome-wide association study) p-values (or other statistical values) at each SNP locus along the genome
 
-> :beginner: **Q-Qplots plots** are a quick way to check if your residuals are normally distributed. Check out more information [here](https://data.library.virginia.edu/understanding-q-q-plots/).
+> :beginner: **Q-Qplots plots** are a quick way to check if your residuals are normally distributed, and to see what the tail of outliers look like. Check out more information [here](https://data.library.virginia.edu/understanding-q-q-plots/).
 
 ```
 pdf("pcadapt_starlings_manhattan.pdf")
@@ -796,6 +796,9 @@ q()
 ```
 <img src="/images/bayescan_outliers.png" alt="Windowed Fst" width="300"/>
 
+
+One final thing to consider - for this analysis, we have looked for outliers across three populations. How do we know in which populations the allele frequencies have changed/are different? It might be useful to look at or plot the allele frequencies of outlier loci across different populations in order to better interpret how selection may be driving these patterns of changing allele frequencies.
+
 ## BayPass
 
 The BayPass manual can be found [here](https://forgemia.inra.fr/mathieu.gautier/baypass_public/-/blob/master/manual/BayPass_manual.pdf?ref_type=heads).
@@ -828,7 +831,7 @@ cp $DIR/data/starling_3populations.plink.map .
 cp $DIR/data/starling_3populations.plink.log .
 ```
 
-Let's take a quick look at both the original PLINK ped file, and the new one. Do you notice anything worrying? We have manually manipulated our file, and by not checking that the ordering of individuals in our xxx metadata file is in the same 
+Let's take a quick look at both the original PLINK ped file, and the new one. Do you notice anything worrying? We have manually manipulated our file, and by not checking that the ordering of individuals in our metadata file is in the same as the ordering of individuals in the .ped file, we have accidentally misassigned genotype information to the wrong sample and population IDs! This is something you should be very careful of when manually manipulating data. If you want to fix this up in your own data, you can follow the instructions above under 'If you are working on your own data: checking metadata file order', but for now we will proceed with this slightly wrong data as the code is the same.
 
 ```
 #original
@@ -1092,13 +1095,16 @@ q()
 
 <img src="/images/outliers_upsetplot.PNG" alt="upset plot of outlier overlaps" width="500"/>
 
-Let's have a discussion about the overlap between these five outlier groups. <p>
+Let's have a discussion about the overlap between these five outlier groups. Many of these programs were asking different questions from one another. PCAdapt is looking for genome-wide outliers, with no population identities assigned. VCFTools looked at outliers between two of our three populations, while Bayescan looked at all three, and also had multiple test correcting and so is quite strict. Baypass was looking at the same three populations as Bayescan, but tries to account for population structure and also we applied a quartile threshold method for determining outliers. Finally, using Baypass for association analysis with wingspan meant that we are not identifying loci different between population, but rather loci associated with morphology.  <p>
 
-And if you want to get really fancy, you may even want to plot your variants at their location around your genome in a <a href="https://github.com/katarinastuart/Sv3_StarlingGenome">circle plot</a>!
+If you want to get really fancy, you may even want to plot your variants at their location around your genome in a <a href="https://github.com/katarinastuart/Sv3_StarlingGenome">circle plot</a>!
+
 
 ## Workshop End discussion
   
-A brief period of group discussion on one of the days about research question framing and grant integration
+A brief period of group discussion on one of the days about research question framing and grant integration - refer to the slides if you need some ideas. Below I will curate a list of useful papers that demonstrate some cool things you can do with your outier loci.
+
+Strong population structure getting in the way of performing environmental associations with your genetic data (GEA)? Read some methods [here](https://besjournals.onlinelibrary.wiley.com/doi/full/10.1111/1365-2656.13692).
   
 ## Outlier Analysis Meta-analysis
 
